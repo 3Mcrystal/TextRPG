@@ -123,12 +123,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Beggar.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Goblin.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Mage.h" />
+    <ClInclude Include="Orc.h" />
+    <ClInclude Include="Ranger.h" />
+    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="TurnManager.h" />
+    <ClInclude Include="Warrior.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Beggar.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Goblin.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Mage.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Orc.cpp" />
+    <ClCompile Include="Ranger.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="TurnManager.cpp" />
+    <ClCompile Include="Warrior.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

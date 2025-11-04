@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Character">
+      <UniqueIdentifier>{2dcd1a0d-c7fd-44a8-9f52-20246ed7bb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Character">
+      <UniqueIdentifier>{6a781c8d-a1d0-4bde-acca-725f32a079d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Enemies">
+      <UniqueIdentifier>{145ca398-039d-4258-9090-020349995091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Enemies">
+      <UniqueIdentifier>{beaced89-28d5-44ce-836b-1c062f3bcf15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Manager">
+      <UniqueIdentifier>{774f40c4-2a12-4448-9bac-f94b1fda8b7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Manager">
+      <UniqueIdentifier>{680f2133-7c7a-43f7-978b-a9c4f2e0ea46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -21,6 +39,36 @@
     <ClInclude Include="Character.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Warrior.h">
+      <Filter>Fichiers d%27en-tête\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Mage.h">
+      <Filter>Fichiers d%27en-tête\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Ranger.h">
+      <Filter>Fichiers d%27en-tête\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Fichiers d%27en-tête\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Orc.h">
+      <Filter>Fichiers d%27en-tête\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Goblin.h">
+      <Filter>Fichiers d%27en-tête\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Beggar.h">
+      <Filter>Fichiers d%27en-tête\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnManager.h">
+      <Filter>Fichiers d%27en-tête\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Fichiers d%27en-tête\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Fichiers d%27en-tête\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entity.cpp">
@@ -28,6 +76,39 @@
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Warrior.cpp">
+      <Filter>Fichiers sources\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Mage.cpp">
+      <Filter>Fichiers sources\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Ranger.cpp">
+      <Filter>Fichiers sources\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Beggar.cpp">
+      <Filter>Fichiers sources\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Fichiers sources\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Orc.cpp">
+      <Filter>Fichiers sources\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Goblin.cpp">
+      <Filter>Fichiers sources\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Fichiers sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnManager.cpp">
+      <Filter>Fichiers sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Fichiers sources\Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

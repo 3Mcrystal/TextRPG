@@ -12,8 +12,8 @@ void TurnManager::StartTurnCycle() {
 	//On each alive entity, call update
 
 	for (auto& entity : m_entities) {
-		if (entity->isAlive()) {
-			entity->update();
+		if (entity->IsAlive()) {
+			entity->Update();
 		}
 	}
 }

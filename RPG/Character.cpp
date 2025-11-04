@@ -13,6 +13,7 @@ void Character::Update() {
 }
 
 int Character::GetAttack() const { return m_attack; }
+
 int Character::GetSpeed() const { return m_speed; }
 
 void Character::Defend() { m_defending = true; }
@@ -24,10 +25,9 @@ int Character::GetGoldReward() const { return 2; } //default
 int Character::GetXpReward() const { return 5; } //default
 
 void Character::TakeDamage(int amount) {
-	if (m_defending = true) 
-	{
-		amount = amount / 2;
-		m_defending = false
-	}
-	Entity::TakeDamage(amount);
+    if (m_defending) {
+        amount = amount / 2;
+        m_defending = false; 
+    }
+    Entity::TakeDamage(amount);
 }

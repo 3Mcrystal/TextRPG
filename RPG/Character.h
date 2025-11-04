@@ -8,8 +8,10 @@ public:
 	virtual ~Character();
 
 	virtual void Update() override;
+
 	int GetAttack() const;
 
+	virtual void TakeDamage(int amount) override;
 
 	virtual int GetSpeed() const override;
 

@@ -7,13 +7,15 @@ public:
     Entity(const std::string& name, int maxHp);
     virtual ~Entity();
 
-	virtual void update() = 0; // action per turn
-    virtual void takeDamage(int amount);
-    virtual bool isAlive() const;
-    virtual std::string getName() const;
+	virtual void Update() = 0; // action per turn
+    virtual void TakeDamage(int amount);
+    virtual bool IsAlive() const;
+    virtual std::string GetName() const;
+    virtual int GetSpeed() const = 0;
 
-    int getHp() const;
-    int getMaxHp() const;
+    int GetHp() const;
+    int GetMaxHp() const;
+
 protected:
     std::string m_name;
     int m_hp;

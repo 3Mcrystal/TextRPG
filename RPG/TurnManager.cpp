@@ -4,11 +4,11 @@
 TurnManager::TurnManager() {}
 TurnManager::~TurnManager() {}
 
-void TurnManager::addEntity(std::shared_ptr<Entity> entity) {
+void TurnManager::AddEntity(std::shared_ptr<Entity> entity) {
 	m_entities.push_back(entity);
 }
 
-void TurnManager::startTurnCycle() {
+void TurnManager::StartTurnCycle() {
 	//On each alive entity, call update
 
 	for (auto& entity : m_entities) {

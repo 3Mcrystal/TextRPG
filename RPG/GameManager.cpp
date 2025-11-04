@@ -31,7 +31,7 @@ void GameManager::loop() {
 		}
 		else if (cmd == "status") {
 			std::cout << "OK "; //TODO
-			m_turns->startTurnCycle();
+			m_turns->StartTurnCycle();
 
 		}
 		//TODO WIN/LOSE conditions

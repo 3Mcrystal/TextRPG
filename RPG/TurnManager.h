@@ -10,8 +10,8 @@ public:
 	TurnManager();
 	~TurnManager();
 
-	void addEntity(std::shared_ptr<Entity> entity);
-	void startTurnCycle();
+	void AddEntity(std::shared_ptr<Entity> entity);
+	void StartTurnCycle();
 
 private:
 	std::vector<std::shared_ptr<Entity>> m_entities;

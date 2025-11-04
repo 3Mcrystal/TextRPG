@@ -6,14 +6,14 @@ Entity::Entity(const std::string& name, int maxHp)
 
 Entity::~Entity() {}
 
-void Entity::takeDamage(int amount) {
+void Entity::TakeDamage(int amount) {
     m_hp -= amount;
     if (m_hp < 0) m_hp = 0;
 }
 
-bool Entity::isAlive() const { return m_hp > 0; }
+bool Entity::IsAlive() const { return m_hp > 0; }
 
-std::string Entity::getName() const { return m_name; }
+std::string Entity::GetName() const { return m_name; }
 
-int Entity::getHp() const { return m_hp; }
-int Entity::getMaxHp() const { return m_maxHp; }
+int Entity::GetHp() const { return m_hp; }
+int Entity::GetMaxHp() const { return m_maxHp; }

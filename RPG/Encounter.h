@@ -1,26 +1,23 @@
 #pragma once
 
-#include<vector>
-#include<memory>
+#include <vector>
+#include <memory>
 
-class Chracter;
+class Character;
 
-class Encounter
-{
+class Encounter {
 public:
-	Encounter();
-	~Encounter();
+    Encounter();
+    ~Encounter();
 
-	void AddEnemy(std::shared_ptr<Character> enemy);
-	const std::vector<std::shared_ptr<Character>>& GetEnemy() const;
+    void AddEnemy(std::shared_ptr<Character> enemy);
+    const std::vector<std::shared_ptr<Character>>& GetEnemies() const;
 
-	bool IsBeggarEncounter() const;
-	void SetBeggarEncounter(bool b);
+    bool IsBeggarEncounter() const;
+    void SetBeggarEncounter(bool b);
 
-	bool IsAllEnemiesDefeated() const;
-
+    bool IsAllEnemiesDefeated() const;
 private:
-	std::vector<std::shared_ptr<Character>> m_enemy;
-	bool m_isbeggar;
+    std::vector<std::shared_ptr<Character>> m_enemies;
+    bool m_isBeggar;
 };
-

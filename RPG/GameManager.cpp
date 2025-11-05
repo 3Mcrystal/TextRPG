@@ -21,21 +21,23 @@ void GameManager::start() {
 }
 
 void GameManager::loop() {
-	while (m_running) {
-		std::cout << "Enter a command (n/s/e/w, status, quit): \n";
-		std::string cmd = m_input->getCommand();
 
-		if (cmd == "quit" || cmd == "q") {
-			m_running = false;
-			continue;
-		}
-		else if (cmd == "status") {
-			std::cout << "OK "; //TODO
-			m_turns->StartTurnCycle();
-
-		}
-		//TODO WIN/LOSE conditions
-	}
+//OUTDATED : TO UODATE
+//	while (m_running) {
+//		std::cout << "Enter a command (n/s/e/w, status, quit): \n";
+//		std::string cmd = m_input->getCommand();
+//
+//		if (cmd == "quit" || cmd == "q") {
+//			m_running = false;
+//			continue;
+//		}
+//		else if (cmd == "status") {
+//			std::cout << "OK "; //TODO
+//			m_turns->StartTurnCycle();
+//
+//		}
+//		//TODO WIN/LOSE conditions
+//	}
 }
 
 void GameManager::shutdown() {

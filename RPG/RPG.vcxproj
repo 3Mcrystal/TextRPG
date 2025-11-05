@@ -132,6 +132,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Mage.h" />
     <ClInclude Include="Orc.h" />
+    <ClInclude Include="PlayerParty.h" />
     <ClInclude Include="Ranger.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="TurnManager.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Mage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Orc.cpp" />
+    <ClCompile Include="PlayerParty.cpp" />
     <ClCompile Include="Ranger.cpp" />
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="TurnManager.cpp" />

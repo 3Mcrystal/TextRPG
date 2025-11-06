@@ -1,4 +1,4 @@
-#include "gameManager.h"
+#include "GameManager.h"
 
 int main() {
     GameManager game;

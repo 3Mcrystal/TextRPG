@@ -4,6 +4,8 @@
 
 class InputManager;
 class TurnManager;
+class PlayerParty;
+class Encounter;
 
 class GameManager
 {
@@ -16,9 +18,11 @@ public:
 	void shutdown();
 
 private:
-	bool m_running;
-
 	std::unique_ptr<InputManager> m_input;
 	std::unique_ptr<TurnManager> m_turns;
-};
+	std::unique_ptr<PlayerParty> m_party;
 
+	bool m_running;
+
+	std::unique_ptr<Encounter> GenerateRandomEncounter();
+};

@@ -7,7 +7,7 @@ PlayerParty::PlayerParty()
 	: m_xp(0), m_gold(0) {
 }
 
-PlayerParty::PlayerParty() {}
+PlayerParty::~PlayerParty() {}
 
 void PlayerParty::AddMember(std::shared_ptr<Character> ch) {
 

@@ -1,18 +1,15 @@
 #pragma once
 
-#include <vector>
 #include <memory>
 
-class Entity;
+class PlayerParty;
+class Encounter;
+class InputManager;
 
 class TurnManager {
 public:
 	TurnManager();
 	~TurnManager();
 
-	void AddEntity(std::shared_ptr<Entity> entity);
-	void StartTurnCycle();
-
-private:
-	std::vector<std::shared_ptr<Entity>> m_entities;
+	bool ExecuteEncounter(PlayerParty& party, Encounter& encounter, InputManager& input);
 };

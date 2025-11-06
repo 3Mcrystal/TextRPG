@@ -144,6 +144,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 			{
 				std::cout << "You ignore the Beggar\n";
 				std::cout << "You hear him crying as you continue your journey\n";
+				InteractionDone = true;
 			}
 
 			else

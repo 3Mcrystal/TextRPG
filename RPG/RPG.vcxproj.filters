@@ -31,6 +31,12 @@
     <Filter Include="Fichiers d%27en-tête\Manager">
       <UniqueIdentifier>{680f2133-7c7a-43f7-978b-a9c4f2e0ea46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\NPC">
+      <UniqueIdentifier>{a8dbb321-dd62-45a0-8a39-4195d7eb741c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\NPC">
+      <UniqueIdentifier>{8f216904-0611-4d01-bf82-4d8900c8582c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -57,9 +63,6 @@
     <ClInclude Include="Goblin.h">
       <Filter>Fichiers d%27en-tête\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Beggar.h">
-      <Filter>Fichiers d%27en-tête\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="TurnManager.h">
       <Filter>Fichiers d%27en-tête\Manager</Filter>
     </ClInclude>
@@ -74,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="Encounter.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Beggar.h">
+      <Filter>Fichiers d%27en-tête\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -94,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="Ranger.cpp">
       <Filter>Fichiers sources\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Beggar.cpp">
-      <Filter>Fichiers sources\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Skeleton.cpp">
       <Filter>Fichiers sources\Enemies</Filter>
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="Encounter.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Beggar.cpp">
+      <Filter>Fichiers sources\NPC</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

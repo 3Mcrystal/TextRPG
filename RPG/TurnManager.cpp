@@ -46,8 +46,8 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 		auto beggar = encounter.GetEnemies()[0]; //only one beggar
 		std::cout << "A beggar approaches you, asking for some gold.\n";
 
-		bool InteraionDone = false;
-		while (!InteraionDone)
+		bool InteractionDone = false;
+		while (!InteractionDone)
 		{
 			std::cout << "What do you do? : \n> ";
 			std::cout << " 1) Attack\n";
@@ -60,7 +60,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 			{
 				std::cout << "You attack the beggar!\n";
 
-				//Loot
+				//Loot(50%)
 				static std::random_device rd;
 				static std::mt19937 gen(rd());
 
@@ -76,7 +76,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 					std::cout << "You found nothing\n";
 				}
 
-				//Consequence (1%)
+				//Consequence (49%)
 				std::uniform_int_distribution consRoll(1, 100);
 				int cons = consRoll(gen);
 
@@ -84,6 +84,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 				{
 					std::cout << "The Beggar is dead\n";
 				}
+
 				else if (cons <= 99) {
 					auto members = party.GetMembers();
 					std::vector<std::shared_ptr<Character>> Alivemembers;
@@ -108,8 +109,9 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 
 					auto members = party.GetMembers();
 					std::vector<std::shared_ptr<Character>> AliveMembers;
-					for (auto& m : members)
+					for (auto& m : members) {
 						if (m->IsAlive()) AliveMembers.push_back(m);
+					}
 
 					if (!AliveMembers.empty()) {
 						std::uniform_int_distribution<> idx(0, (int)AliveMembers.size() - 1);
@@ -124,246 +126,285 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 					}
 
 				}
-				InteraionDone = true;
+				InteractionDone = true;
 			}
-			else if (choice == "2" || choice == "Give" || choice == "give" {
+
+			else if (choice == "2" || choice == "Give" || choice == "give")
+			{
+
 				std::cout << "You give one gold to the Beggar\n";
 				std::cout << "Thank you\n";
-				party.GetGold(-1);
-				InteraionDone = true;
+
+				party.AddGold(-1);
+				InteractionDone = true;
 			}
+
+
 			else if (choice == "3" || choice == "Ignore" || choice == "ignore")
 			{
-				//TODO
+				std::cout << "You ignore the Beggar\n";
+				std::cout << "You hear him crying as you continue your journey\n";
+			}
+
+			else
+			{
+
+				std::cout << "Unknown command\n";
+
 			}
 		}
 
+		return true;
+	}
 
-		using EntityPtr = std::shared_ptr<Character>;
 
-			while (true)
+	using EntityPtr = std::shared_ptr<Character>;
+
+
+	while (true)
+	{
+
+		std::vector<EntityPtr> order; //list entities in encounter
+
+		//Party members
+		for (auto& p : party.GetMembers())
+			if (p->IsAlive())
+				order.push_back(p);
+
+
+		//Enemies
+		for (auto& e : encounter.GetEnemies())
+			if (e->IsAlive())
+				order.push_back(e);
+
+
+		//Sort by speed
+		std::sort(order.begin(), order.end(), [](const EntityPtr& a, const EntityPtr& b) {
+			return a->GetSpeed() > b->GetSpeed();
+
+			//TODO : If buffers/debuffers
+
+			}
+		);
+
+		//Turn resolution
+		for (auto& actor : order)
+		{
+			if (!actor->IsAlive())
+				continue; //skip dead entities
+
+			//check end
+			if (party.IsDefeated() || encounter.IsAllEnemiesDefeated()) break;
+
+			bool IsPlayerActor = false;
+			for (auto& p : party.GetMembers())
 			{
-
-				std::vector<EntityPtr> order; //list entities in encounter
-
-				//Party members
-				for (auto& p : party.GetMembers())
-					if (p->IsAlive())
-						order.push_back(p);
-
-
-				//Enemies
-				for (auto& e : encounter.GetEnemies())
-					if (e->IsAlive())
-						order.push_back(e);
-
-
-				//Sort by speed
-				std::sort(order.begin(), order.end(), [](const EntityPtr& a, const EntityPtr& b) {
-					return a->GetSpeed() > b->GetSpeed();
-
-					//TODO : If buffers/debuffers
-
-					}
-				);
-
-				//Turn resolution
-				for (auto& actor : order)
-				{
-					if (!actor->IsAlive())
-						continue; //skip dead entities
-
-					//check end
-					if (party.IsDefeated() || encounter.IsAllEnemiesDefeated()) break;
-
-					bool IsPlayerActor = false;
-					for (auto& p : party.GetMembers()) {
-						if (p == actor) {
-							IsPlayerActor = true;
-							break;
-						}
-
-						//Player turn
-						if (IsPlayerActor)
-						{
-							std::string cmd = input.RequestActionFor(actor->GetName());
-
-							//Attack
-							if (cmd == "attack")
-							{
-								std::vector<EntityPtr> aliveEnemies;
-								for (auto& e : encounter.GetEnemies())
-									if (e->IsAlive())
-										aliveEnemies.push_back(e);
-
-								if (aliveEnemies.empty()) continue; //no targets
-
-								int idx = input.RequestTragetIndex((int)aliveEnemies.size());
-								auto target = aliveEnemies[idx];
-
-								std::cout << actor->GetName() << " attacks " << target->GetName() << " for " << actor->GetAttack() << " damage!\n";
-
-								target->TakeDamage(actor->GetAttack());
-							}
-
-							//Defend
-							else if (cmd == "defend")
-							{
-								actor->Defend();
-								std::cout << actor->GetName() << " is defending!\n";
-							}
-
-							//Skill
-							else if (cmd == "skill")
-							{
-								std::vector<EntityPtr> aliveEnemies;
-								for (auto& e : encounter.GetEnemies())
-									if (e->IsAlive())
-										aliveEnemies.push_back(e);
-
-								if (aliveEnemies.empty()) continue; //no targets
-
-								int idx = input.RequestTragetIndex((int)aliveEnemies.size());
-								auto target = aliveEnemies[idx];
-
-								//Warior Skill
-								if (auto w = std::dynamic_pointer_cast<Warrior>(actor))
-								{
-									w->ShieldBash(*target);
-								}
-
-								//Mage Skill
-								else if (auto m = std::dynamic_pointer_cast<Mage>(actor))
-								{
-									m->Fireball(*target);
-								}
-
-								//Ranger Skill
-								else if (auto r = std::dynamic_pointer_cast<Ranger>(actor))
-								{
-									r->PrecisionShot(*target);
-								}
-
-								else
-								{
-									std::cout << actor->GetName() << " has no skills to use!\n";
-								}
-							}
-
-							//Run (simple 50%)
-							else if (cmd == "run")
-							{
-								static std::random_device rd;
-								static std::mt19937 gen(rd());
-								std::uniform_int_distribution<> dis(0, 1);
-								if (dis(gen) == 1)
-								{
-									std::cout << "You successfully ran away!\n";
-									return true; //escape
-								}
-								else //take damage for failed escape
-								{
-									std::cout << "Failed to run away! You take 5 damage!\n";
-									actor->TakeDamage(5);
-								}
-							}
-
-							else
-							{
-								std::cout << "Invalid command\n";
-							}
-						}
-
-						//Enemy turn (30% skill, 70% attack)
-						else
-						{
-							auto enemies = party.GetMembers();
-							std::vector<EntityPtr> alivePlayers;
-
-							for (auto& p : enemies)
-								if (p->IsAlive())
-									alivePlayers.push_back(p);
-
-							auto target = ChooseRandomAlive(alivePlayers);
-							if (!target) continue; //no targets
-
-							static std::random_device rd;
-							static std::mt19937 gen(rd());
-							std::uniform_int_distribution<> roll(0, 100);
-
-							int r = roll(gen);
-
-							//Goblin
-							if (auto g = std::dynamic_pointer_cast<Goblin>(actor)) {
-
-								if (r <= 30) g->ClubSmash(*target);
-
-								else {
-									std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
-									target->TakeDamage(actor->GetAttack());
-								}
-							}
-
-							//Orc
-							else if (auto o = std::dynamic_pointer_cast<Orc>(actor)) {
-								if (r <= 30) o->AxeSwing(*target);
-								else {
-									std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
-									target->TakeDamage(actor->GetAttack());
-								}
-							}
-
-							//Skeleton
-							else if (auto s = std::dynamic_pointer_cast<Skeleton>(actor)) {
-								if (r <= 30) s->BoneSlash(*target);
-								else {
-									std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
-									target->TakeDamage(actor->GetAttack());
-								}
-							}
-							else
-							{
-								//Default attack
-								std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
-								target->TakeDamage(actor->GetAttack());
-							}
-						}
-					} //end action turn
-				}
-
-
-
-
-				//Check Defeat
-				if (party.IsDefeated())
-				{
-					std::cout << "Your party has been defeated...\n";
-					std::cout << "Git good...\n";
-					return false;
-				}
-
-				//Check Victory
-				if (encounter.IsAllEnemiesDefeated())
-				{
-					std::cout << "You have defeated all enemies!\n";
-
-					int totalXp = 0;
-					int totalGold = 0;
-
-					for (auto& e : encounter.GetEnemies())
-					{
-						totalXp += e->GetXpReward();
-						totalGold += e->GetGoldReward();
-
-					}
-
-					std::cout << "Your party gains " << totalXp << " XP and " << totalGold << " Gold!\n";
-
-					party.AddXp(totalXp);
-					party.AddGold(totalGold);
-
-					return true;
+				if (p == actor) {
+					IsPlayerActor = true;
+					break;
 				}
 
 			}
+
+			if (IsPlayerActor)
+			{
+				bool TurnEnded = false;
+
+				while (!TurnEnded)
+				{
+
+					std::string cmd = input.RequestActionFor(actor->GetName());
+
+					//Attack
+					if (cmd == "attack")
+					{
+						std::vector<EntityPtr> aliveEnemies;
+						for (auto& e : encounter.GetEnemies())
+							if (e->IsAlive())
+								aliveEnemies.push_back(e);
+
+						if (aliveEnemies.empty()) continue; //no targets
+
+						int idx = input.RequestTragetIndex((int)aliveEnemies.size());
+						auto target = aliveEnemies[idx];
+
+						std::cout << actor->GetName() << " attacks " << target->GetName() << " for " << actor->GetAttack() << " damage!\n";
+
+						target->TakeDamage(actor->GetAttack());
+						TurnEnded = true;
+					}
+
+					//Defend
+					else if (cmd == "defend")
+					{
+						actor->Defend();
+						std::cout << actor->GetName() << " is defending!\n";
+						TurnEnded = true;
+					}
+
+					//Skill
+					else if (cmd == "skill")
+					{
+						std::vector<EntityPtr> aliveEnemies;
+						for (auto& e : encounter.GetEnemies())
+							if (e->IsAlive())
+								aliveEnemies.push_back(e);
+
+						if (aliveEnemies.empty()) continue; //no targets
+
+						int idx = input.RequestTragetIndex((int)aliveEnemies.size());
+						auto target = aliveEnemies[idx];
+
+						//Warior Skill
+						if (auto w = std::dynamic_pointer_cast<Warrior>(actor))
+						{
+							w->ShieldBash(*target);
+						}
+
+						//Mage Skill
+						else if (auto m = std::dynamic_pointer_cast<Mage>(actor))
+						{
+							m->Fireball(*target);
+						}
+
+						//Ranger Skill
+						else if (auto r = std::dynamic_pointer_cast<Ranger>(actor))
+						{
+							r->PrecisionShot(*target);
+						}
+
+						else
+						{
+							std::cout << actor->GetName() << " has no skills to use!\n";
+						}
+						TurnEnded = true;
+					}
+
+					//Run (simple 50%)
+					else if (cmd == "run")
+					{
+						static std::random_device rd;
+						static std::mt19937 gen(rd());
+						std::uniform_int_distribution<> dis(0, 1);
+						if (dis(gen) == 1)
+						{
+							std::cout << "You successfully ran away!\n";
+							return true; //escape
+						}
+						else //take damage for failed escape
+						{
+							std::cout << "Failed to run away! You take 5 damage!\n";
+							actor->TakeDamage(5);
+						}
+						TurnEnded = true;
+					}
+
+					else
+					{
+						std::cout << "Invalid command\n";
+					}
+
+				}
+			}
+
+			//Enemy turn (30% skill, 70% attack)
+			else
+			{
+				auto enemies = party.GetMembers();
+				std::vector<EntityPtr> alivePlayers;
+
+				for (auto& p : enemies)
+					if (p->IsAlive())
+						alivePlayers.push_back(p);
+
+				auto target = ChooseRandomAlive(alivePlayers);
+				if (!target) continue; //no targets
+
+				static std::random_device rd;
+				static std::mt19937 gen(rd());
+				std::uniform_int_distribution<> roll(0, 100);
+
+				int r = roll(gen);
+
+				//Goblin
+				if (auto g = std::dynamic_pointer_cast<Goblin>(actor)) {
+
+					if (r <= 30) g->ClubSmash(*target);
+
+					else {
+						int dmg = actor->GetAttack();
+						std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
+						target->TakeDamage(dmg);
+					}
+				}
+
+				//Orc
+				else if (auto o = std::dynamic_pointer_cast<Orc>(actor)) {
+					if (r <= 30) o->AxeSwing(*target);
+					else {
+						int dmg = actor->GetAttack();
+						std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
+						target->TakeDamage(dmg);
+					}
+				}
+
+				//Skeleton
+				else if (auto s = std::dynamic_pointer_cast<Skeleton>(actor)) {
+					if (r <= 30) s->BoneSlash(*target);
+					else {
+						int dmg = actor->GetAttack();
+						std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
+						target->TakeDamage(dmg);
+					}
+				}
+				else
+				{
+					//Default attack
+					int dmg = actor->GetAttack();
+					std::cout << actor->GetName() << " attacks " << target->GetName() << "\n";
+					target->TakeDamage(dmg);
+				}
+
+			} //end action turn
+
+
+		}
+
+
+
+
+		//Check Defeat
+		if (party.IsDefeated())
+		{
+			std::cout << "Your party has been defeated...\n";
+			std::cout << "Git good...\n";
+			return false;
+		}
+
+		//Check Victory
+		if (encounter.IsAllEnemiesDefeated())
+		{
+			std::cout << "You have defeated all enemies!\n";
+
+			int totalXp = 0;
+			int totalGold = 0;
+
+			for (auto& e : encounter.GetEnemies())
+			{
+				totalXp += e->GetXpReward();
+				totalGold += e->GetGoldReward();
+
+			}
+
+			std::cout << "Your party gains " << totalXp << " XP and " << totalGold << " Gold!\n";
+
+			party.AddXp(totalXp);
+			party.AddGold(totalGold);
+
+			return true;
+		}
 	}
+
+	return true;
+}
+

@@ -90,11 +90,11 @@ void GameManager::shutdown() {
 std::unique_ptr<Encounter> GameManager::GenerateRandomEncounter() {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_int_distribution<> EncounterType(0, 5); //0-4 fight, 5 beggar (20%)
+	std::uniform_int_distribution<> EncounterType(0, 4); //0-3 fight, 4 beggar (20%)
 	int t = EncounterType(gen);
 
 	auto encounter = std::make_unique<Encounter>();
-	if (t == 5) {
+	if (t == 4) {
 		//Beggar encounter
 		encounter->SetBeggarEncounter(true);
 		encounter->AddEnemy(std::make_shared<Beggar>("Beggar"));

@@ -24,9 +24,9 @@ void GameManager::start() {
 	m_party = std::make_unique<PlayerParty>();
 
 	//create  party
-	m_party->AddMember(std::make_shared<Warrior>("W"));
-	m_party->AddMember(std::make_shared<Mage>("M"));
-	m_party->AddMember(std::make_shared<Ranger>("R"));
+	m_party->AddMember(std::make_shared<Warrior>("Slankec"));
+	m_party->AddMember(std::make_shared<Mage>("Narchis"));
+	m_party->AddMember(std::make_shared<Ranger>("Aethyra"));
 
 	m_running = true;
 	std::cout << "Game started!\n";

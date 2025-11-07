@@ -13,6 +13,8 @@ public:
 
 	void Interact(PlayerParty& party, InputManager& input);
 
+	Inventory& GetStock() { return m_stock; }
+
 private:
 	Inventory m_stock; // Merchant's inventory
 };

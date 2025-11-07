@@ -20,6 +20,7 @@
 #include "Skeleton.h"
 #include "Beggar.h"
 
+#include "Merchant.h"
 
 TurnManager::TurnManager() {}
 TurnManager::~TurnManager() {}
@@ -133,12 +134,19 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 
 			else if (choice == "2" || choice == "Give" || choice == "give")
 			{
+				if (party.GetGold() < 1)
+				{
+					std::cout << "You don't have enough gold to give!\n";
+					continue;
+				}
+				else {
 
-				std::cout << "You give one gold to the Beggar\n";
-				std::cout << "Thank you\n";
+					std::cout << "You give one gold to the Beggar\n";
+					std::cout << "Thank you\n";
 
-				party.AddGold(-1);
-				InteractionDone = true;
+					party.AddGold(-1);
+					InteractionDone = true;
+				}
 			}
 
 
@@ -157,6 +165,17 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 			}
 		}
 
+		return true;
+	}
+
+	if (encounter.IsMerchantEncounter())
+	{
+		std::cout << "You meet a trvelling merchant\n";
+
+		Merchant merchant; //for restock
+		merchant.Interact(party, input);
+
+		std::cout << "You continue your journey\n";
 		return true;
 	}
 

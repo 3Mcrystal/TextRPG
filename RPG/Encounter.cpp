@@ -20,6 +20,14 @@ void Encounter::SetBeggarEncounter(bool b) {
     m_isBeggar = b;
 }
 
+bool Encounter::IsMerchantEncounter() const {
+    return m_isMerchant;
+}
+
+void Encounter::SetMerchantEncounter(bool b) {
+    m_isMerchant = b;
+}
+
 bool Encounter::IsAllEnemiesDefeated() const {
     for (auto& e : m_enemies) {
         if (e->IsAlive()) return false;

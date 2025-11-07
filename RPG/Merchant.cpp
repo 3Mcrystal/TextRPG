@@ -20,7 +20,8 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
 
     while (!done) {
 
-        std::cout << "\n=== Merchant Stock ===\n";
+        std::cout << "Your gold: " << party.GetGold() << "\n\n";
+        std::cout << "\nMerchant Stock\n";
         auto& stacks = m_stock.GetItemStacks();
 
         if (stacks.empty()) {
@@ -28,7 +29,7 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
         } else {
             int idx = 0;
             for (auto& s : stacks) {
-                std::cout << "[" << idx++ << "] " << s.GetName() << " - Price: " << s.GetPrototype()->GetPrice() << " Gold" << " | Stock: " << s.GetQuantity() << "\n";
+                std::cout << "[" << idx++ << "] " << s.GetPrototype()->GetName() << " - Price: " << s.GetPrototype()->GetPrice() << " Gold" << " | Stock: " << s.GetQuantity() << "\n";
             }
         }
 

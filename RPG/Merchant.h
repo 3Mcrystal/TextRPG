@@ -17,5 +17,8 @@ public:
 
 private:
 	Inventory m_stock; // Merchant's inventory
+
+	float m_priceMultiplier = 1.0f; // Price multiplier
+
 };
 

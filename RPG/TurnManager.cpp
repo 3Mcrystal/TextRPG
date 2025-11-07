@@ -103,9 +103,10 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 						std::cout << target->GetName() << " take " << dmg << " damage!\n";
 						target->TakeDamage(dmg);
 
-						std::cout << "Shame on your disgusting person!";
 
 					}
+
+					std::cout << "Shame on your disgusting person!\n";
 
 				}
 				else {
@@ -124,7 +125,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 						std::cout << target->GetName() << "has been cursed\n";
 						std::cout << "Well deserved\n";
 
-						//TODO : curse Logic
+						target->ApplyCurse(3); //3 fights before death
 
 					}
 
@@ -170,7 +171,8 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 
 	if (encounter.IsMerchantEncounter())
 	{
-		std::cout << "You meet a trvelling merchant\n";
+		std::cout << "Over here, stranger\n";
+		std::cout << "You meet a travelling merchant\n";
 
 		Merchant merchant; //for restock
 		merchant.Interact(party, input);
@@ -325,7 +327,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 						//Choose target to use item on
 						auto members = party.GetMembers();
 
-						for(size_t i = 0; i < members.size(); ++i)
+						for (size_t i = 0; i < members.size(); ++i)
 						{
 							std::cout << "[" << i << "] " << members[i]->GetName() << " (HP: " << members[i]->GetHp() << " / " << members[i]->GetMaxHp() << ")\n";
 						}
@@ -435,8 +437,6 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 		}
 
 
-
-
 		//Check Defeat
 		if (party.IsDefeated())
 		{
@@ -464,6 +464,17 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 
 			party.AddXp(totalXp);
 			party.AddGold(totalGold);
+
+			//Tick curse
+			for (auto& member : party.GetMembers())
+			{
+				if (member->IsCursed())
+				{
+					member->TickCurse();
+
+					std::cout << member->GetName() << "'s curse has worsened... " << member->GetCurseRemainingFights() << "before passing away.\n";
+				}
+			}
 
 			return true;
 		}

@@ -95,7 +95,7 @@ std::unique_ptr<Encounter> GameManager::GenerateRandomEncounter() {
 
 	auto encounter = std::make_unique<Encounter>();
 
-	if (t >= 1 && t <= 98) {
+	if (t >= 70 && t <= 84) {
 		//Beggar encounter
 		encounter->SetBeggarEncounter(true);
 		encounter->AddEnemy(std::make_shared<Beggar>("Beggar"));
@@ -103,7 +103,7 @@ std::unique_ptr<Encounter> GameManager::GenerateRandomEncounter() {
 	}
 
 	//Merchant encounter
-	if(t >= 99) {
+	if(t >= 85) {
 		encounter->SetMerchantEncounter(true);
 		return encounter;
 	}

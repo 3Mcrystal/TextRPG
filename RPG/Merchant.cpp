@@ -4,6 +4,7 @@
 #include "PlayerParty.h"
 #include "Potion.h"
 #include "InputManager.h"
+#include "Character.h"
 
 Merchant::Merchant() {
     // Restock at each encounter
@@ -13,8 +14,24 @@ Merchant::Merchant() {
 Merchant::~Merchant() {}
 
 void Merchant::Interact(PlayerParty& party, InputManager& input) {
-    std::cout << "A merchant approaches.\n";
-    std::cout << "What're ya buyin'?\n";
+
+    bool hasCurse = false;
+    for (auto& m : party.GetMembers()) {
+        if (m->IsCursed()) {
+            hasCurse = true;
+            break;
+        }
+	}
+
+	// If cursed, higher prices
+	m_priceMultiplier = hasCurse ? 4.0f : 1.0f;
+
+    if (hasCurse) {
+        std::cout << "Heh heh. Having a rough day, stranger?\n";
+    }
+    else {
+        std::cout << "What're ya buyin'?\n";
+    }
 
     bool done = false;
 
@@ -29,7 +46,12 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
         } else {
             int idx = 0;
             for (auto& s : stacks) {
-                std::cout << "[" << idx++ << "] " << s.GetPrototype()->GetName() << " - Price: " << s.GetPrototype()->GetPrice() << " Gold" << " | Stock: " << s.GetQuantity() << "\n";
+
+				int basePrice = s.GetPrototype()->GetPrice();
+				int finalPrice = (int)basePrice * m_priceMultiplier;
+
+                std::cout << "[" << idx++ << "] " << s.GetPrototype()->GetName() << " - Price: " << finalPrice << " Gold" << " | Stock: " << s.GetQuantity() << "\n";
+
             }
         }
 
@@ -53,7 +75,8 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
 
         if (index >= 0 && index < (int)stacks.size()) {
             auto& stack = stacks[index];
-            int price = stack.GetPrototype()->GetPrice();
+            int price = (int)stack.GetPrototype()->GetPrice() * m_priceMultiplier;
+
 
             if (party.GetGold() < price) {
                 std::cout << "Not enough cash, stranger!\n";
@@ -65,8 +88,7 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
             party.GetInventory().AddItem(stack.GetPrototype(), 1);
             m_stock.RemoveItem(stack.GetName(), 1);
 
-            std::cout << "You bought a " << stack.GetName()
-                      << " for " << price << " Gold.\n";
+            std::cout << "You bought a " << stack.GetName() << " for " << price << " Gold.\n";
         }
         else {
             std::cout << "Invalid choice.\n";

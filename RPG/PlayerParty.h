@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 
+#include "Inventory.h"
+
 class Character;
 class TurnManager;
 
@@ -22,8 +24,12 @@ public:
 	int GetXp() const;
 	int GetGold() const;
 
+	Inventory& GetInventory() { return m_inventory; }
+	const Inventory& GetInventory() const { return m_inventory; }
+
 private:
 	friend class TurnManager; //Auth private access
+	friend class Merchant;
 
 	void AddXp(int amount);
 	void AddGold(int amount);
@@ -31,5 +37,7 @@ private:
 	std::vector<std::shared_ptr<Character>> m_members;
 	int m_xp;
 	int m_gold;
+
+	Inventory m_inventory;
 };
 

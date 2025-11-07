@@ -3,6 +3,7 @@
 #include <random>
 #include <iostream>
 #include <algorithm>
+#include <string>
 
 #include "TurnManager.h"
 #include "PlayerParty.h"
@@ -17,6 +18,7 @@
 #include "Goblin.h"
 #include "Orc.h"
 #include "Skeleton.h"
+#include "Beggar.h"
 
 
 TurnManager::TurnManager() {}
@@ -230,7 +232,6 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 						auto target = aliveEnemies[idx];
 
 						std::cout << actor->GetName() << " attacks " << target->GetName() << " for " << actor->GetAttack() << " damage!\n";
-
 						target->TakeDamage(actor->GetAttack());
 						TurnEnded = true;
 					}
@@ -281,6 +282,44 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 						TurnEnded = true;
 					}
 
+					else if (cmd == "item")
+					{
+						auto& inv = party.GetInventory();
+						const auto& stacks = inv.GetItemStacks();
+
+						if (stacks.empty())
+						{
+							std::cout << "Your inventory is empty!\n";
+							continue; //continue turn
+						}
+
+						std::cout << "Inventory:\n";
+						for (size_t i = 0; i < stacks.size(); ++i)
+						{
+							std::cout << "[" << i << "] " << stacks[i].GetName() << " x" << stacks[i].GetQuantity() << "\n";
+						}
+
+						int itemIdx = input.RequestTragetIndex((int)stacks.size());
+						if (itemIdx < 0 || itemIdx >= (int)stacks.size()) itemIdx = 0;
+						auto choseName = stacks[itemIdx].GetName();
+
+						//Choose target to use item on
+						auto members = party.GetMembers();
+
+						for(size_t i = 0; i < members.size(); ++i)
+						{
+							std::cout << "[" << i << "] " << members[i]->GetName() << " (HP: " << members[i]->GetHp() << " / " << members[i]->GetMaxHp() << ")\n";
+						}
+
+						int targetIdx = input.RequestTragetIndex((int)members.size());
+						if (targetIdx < 0 || targetIdx >= (int)members.size()) targetIdx = 0;
+						auto target = members[targetIdx];
+
+						//Use item
+						inv.UseItem(choseName, *target);
+						TurnEnded = true;
+					}
+
 					//Run (simple 50%)
 					else if (cmd == "run")
 					{
@@ -298,6 +337,11 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter, Inp
 							actor->TakeDamage(5);
 						}
 						TurnEnded = true;
+					}
+
+					else if (cmd == "status")
+					{
+						party.PrintStatus();
 					}
 
 					else

@@ -15,5 +15,11 @@ bool Entity::IsAlive() const { return m_hp > 0; }
 
 std::string Entity::GetName() const { return m_name; }
 
+void Entity::SetHp(int hp) {
+    if (hp < 0) hp = 0;
+    if (hp > m_maxHp) hp = m_maxHp;
+    m_hp = hp;
+}
+
 int Entity::GetHp() const { return m_hp; }
 int Entity::GetMaxHp() const { return m_maxHp; }

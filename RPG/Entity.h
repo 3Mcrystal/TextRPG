@@ -13,7 +13,9 @@ public:
     virtual std::string GetName() const;
     virtual int GetSpeed() const = 0;
 
+    void SetHp(int hp);
     int GetHp() const;
+
     int GetMaxHp() const;
 
 protected:

@@ -32,10 +32,16 @@
       <UniqueIdentifier>{680f2133-7c7a-43f7-978b-a9c4f2e0ea46}</UniqueIdentifier>
     </Filter>
     <Filter Include="Fichiers sources\NPC">
-      <UniqueIdentifier>{a8dbb321-dd62-45a0-8a39-4195d7eb741c}</UniqueIdentifier>
+      <UniqueIdentifier>{967e48ca-75dd-445c-9349-97fbe5dd21b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Fichiers d%27en-tête\NPC">
-      <UniqueIdentifier>{8f216904-0611-4d01-bf82-4d8900c8582c}</UniqueIdentifier>
+      <UniqueIdentifier>{de6e7969-d876-4856-8245-9eccef5ad105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Item">
+      <UniqueIdentifier>{588eef97-be63-4a80-93b9-ceea86b9cbbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Item">
+      <UniqueIdentifier>{d1a19ad7-8404-4447-8e81-ead3d046ad4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +86,21 @@
     </ClInclude>
     <ClInclude Include="Beggar.h">
       <Filter>Fichiers d%27en-tête\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Merchant.h">
+      <Filter>Fichiers d%27en-tête\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Fichiers d%27en-tête\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Potion.h">
+      <Filter>Fichiers d%27en-tête\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemStack.h">
+      <Filter>Fichiers d%27en-tête\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Fichiers d%27en-tête\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +148,21 @@
     </ClCompile>
     <ClCompile Include="Beggar.cpp">
       <Filter>Fichiers sources\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Merchant.cpp">
+      <Filter>Fichiers sources\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Potion.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemStack.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Fichiers sources\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

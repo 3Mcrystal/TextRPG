@@ -12,7 +12,7 @@ std::string InputManager::GetLine() {
 }
 
 std::string InputManager::RequestActionFor(const std::string& characterName) {
-	std::cout << "Enter action for " << characterName << " ( attack / defend / skill / run)\n> ";
+	std::cout << "Enter action for " << characterName << " ( attack / defend / skill / run / status / item)\n> ";
 	std::string cmd = GetLine();
 	return cmd;
 }

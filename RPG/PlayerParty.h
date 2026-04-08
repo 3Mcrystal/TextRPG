@@ -21,7 +21,7 @@ public:
 	bool IsDefeated() const;
 	void PrintStatus() const;
 
-	int GetXp() const;
+	int GetXp()   const;
 	int GetGold() const;
 
 	Inventory& GetInventory() { return m_inventory; }
@@ -31,7 +31,8 @@ private:
 	friend class TurnManager; //Auth private access
 	friend class Merchant;
 
-	void AddXp(int amount);
+	void AddXp(int amount);      // total XP pool (kept for compatibility)
+	void DistributeXp(int amount); // splits XP across alive members
 	void AddGold(int amount);
 
 	std::vector<std::shared_ptr<Character>> m_members;

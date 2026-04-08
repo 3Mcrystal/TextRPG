@@ -19,9 +19,13 @@ public:
     bool IsMerchantEncounter() const;
 	void SetMerchantEncounter(bool b);
 
+    bool IsBossEncounter() const;
+    void SetBossEncounter(bool b);
+
     bool IsAllEnemiesDefeated() const;
 private:
     std::vector<std::shared_ptr<Character>> m_enemies;
     bool m_isBeggar;
 	bool m_isMerchant;
+	bool m_isBoss = false;
 };

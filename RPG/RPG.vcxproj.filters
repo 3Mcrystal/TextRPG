@@ -164,5 +164,14 @@
     <ClCompile Include="Inventory.cpp">
       <Filter>Fichiers sources\Item</Filter>
     </ClCompile>
+    <ClCompile Include="Antidote.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="SmokeBomb.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Troll.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

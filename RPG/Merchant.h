@@ -16,9 +16,7 @@ public:
 	Inventory& GetStock() { return m_stock; }
 
 private:
-	Inventory m_stock; // Merchant's inventory
-
-	float m_priceMultiplier = 1.0f; // Price multiplier
-
+	Inventory m_stock;
+	float m_priceMultiplier = 1.0f;
 };
 

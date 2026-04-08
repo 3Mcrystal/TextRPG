@@ -1,10 +1,12 @@
 #include "ItemStack.h"
 
 ItemStack::ItemStack(std::shared_ptr<Item> prototype, int qty)
-    : m_itemPrototype(prototype), m_quantity(qty) {}
+    : m_itemPrototype(prototype), m_quantity(qty)
+    , m_name(prototype->GetName()) // cache the name to avoid dangling reference
+{}
 
 const std::string& ItemStack::GetName() const {
-    return m_itemPrototype->GetName();
+    return m_name;
 }
 
 int ItemStack::GetQuantity() const {

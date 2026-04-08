@@ -28,6 +28,9 @@ void Encounter::SetMerchantEncounter(bool b) {
     m_isMerchant = b;
 }
 
+bool Encounter::IsBossEncounter() const { return m_isBoss; }
+void Encounter::SetBossEncounter(bool b) { m_isBoss = b; }
+
 bool Encounter::IsAllEnemiesDefeated() const {
     for (auto& e : m_enemies) {
         if (e->IsAlive()) return false;

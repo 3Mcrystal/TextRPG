@@ -21,5 +21,6 @@ public:
 private:
 	std::shared_ptr<Item> m_itemPrototype;
 	int m_quantity;
+	std::string m_name; // cached to avoid returning ref to temporary
 };
 

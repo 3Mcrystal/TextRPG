@@ -42,8 +42,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -145,6 +145,7 @@
     <ClInclude Include="Warrior.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Antidote.cpp" />
     <ClCompile Include="Beggar.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Encounter.cpp" />
@@ -163,6 +164,8 @@
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="Ranger.cpp" />
     <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="SmokeBomb.cpp" />
+    <ClCompile Include="Troll.cpp" />
     <ClCompile Include="TurnManager.cpp" />
     <ClCompile Include="Warrior.cpp" />
   </ItemGroup>

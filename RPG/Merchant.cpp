@@ -88,7 +88,7 @@ void Merchant::Interact(PlayerParty& party, InputManager& input) {
     for (auto& m : party.GetMembers())
         if (m->IsCursed()) { hasCurse = true; break; }
 
-    m_priceMultiplier = hasCurse ? 4.0f : 1.0f;
+    m_priceMultiplier = hasCurse ? 3.0f : 1.0f;
 
     std::cout << RandomGreeting(hasCurse) << "\n";
 

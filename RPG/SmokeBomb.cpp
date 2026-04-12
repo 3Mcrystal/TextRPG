@@ -9,8 +9,8 @@ SmokeBomb::~SmokeBomb() {}
 
 void SmokeBomb::Use(Character& target)
 {
-	// The target parameter is unused for escape items — the effect
-	// is on the whole party. TurnManager checks WasUsedToEscape().
+	//effect on whole party
+	//TurnManager checks WasUsedToEscape().
 	(void)target;
 	m_escapeTriggered = true;
 	std::cout << "A thick cloud of smoke fills the air... you slip away!\n";

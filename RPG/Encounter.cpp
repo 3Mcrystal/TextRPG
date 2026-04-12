@@ -1,39 +1,22 @@
 #include "Encounter.h"
 #include "Character.h"
 
-Encounter::Encounter() : m_isBeggar(false) {}
+Encounter::Encounter() {}
 Encounter::~Encounter() {}
 
-void Encounter::AddEnemy(std::shared_ptr<Character> enemy) {
-    m_enemies.push_back(enemy);
-}
+void Encounter::AddEnemy(std::shared_ptr<Character> enemy) { m_enemies.push_back(enemy); }
+const std::vector<std::shared_ptr<Character>>& Encounter::GetEnemies() const { return m_enemies; }
 
-const std::vector<std::shared_ptr<Character>>& Encounter::GetEnemies() const {
-    return m_enemies;
-}
-
-bool Encounter::IsBeggarEncounter() const {
-    return m_isBeggar;
-}
-
-void Encounter::SetBeggarEncounter(bool b) {
-    m_isBeggar = b;
-}
-
-bool Encounter::IsMerchantEncounter() const {
-    return m_isMerchant;
-}
-
-void Encounter::SetMerchantEncounter(bool b) {
-    m_isMerchant = b;
-}
-
-bool Encounter::IsBossEncounter() const { return m_isBoss; }
-void Encounter::SetBossEncounter(bool b) { m_isBoss = b; }
+bool Encounter::IsBeggarEncounter()  const { return m_isBeggar;   }
+void Encounter::SetBeggarEncounter(bool b) { m_isBeggar   = b;    }
+bool Encounter::IsMerchantEncounter() const { return m_isMerchant; }
+void Encounter::SetMerchantEncounter(bool b){ m_isMerchant = b;   }
+bool Encounter::IsBossEncounter()    const { return m_isBoss;     }
+void Encounter::SetBossEncounter(bool b)   { m_isBoss     = b;    }
+bool Encounter::IsFinalBoss()        const { return m_isFinal;    }
+void Encounter::SetFinalBoss(bool b)       { m_isFinal    = b;    }
 
 bool Encounter::IsAllEnemiesDefeated() const {
-    for (auto& e : m_enemies) {
-        if (e->IsAlive()) return false;
-    }
-    return true;
+	for (auto& e : m_enemies) if (e->IsAlive()) return false;
+	return true;
 }

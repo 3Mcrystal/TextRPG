@@ -1,15 +1,14 @@
 #pragma once
-
 #include "Character.h"
 
-class Ranger : public Character
-{
+class Ranger : public Character {
 public:
-	Ranger(const std::string& name = "Ranger");
-	virtual ~Ranger();
+    Ranger(const std::string& name = "Ranger");
+    virtual ~Ranger();
+    virtual void Update() override;
 
-	virtual void Update() override;
-	
-	void PrecisionShot(Character& target);
+    void PrecisionShot(Character& target);
+    void PoisonArrow(Character& target);
+protected:
+    virtual void OnLevelUp() override;
 };
-

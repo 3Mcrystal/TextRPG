@@ -1,15 +1,12 @@
 #pragma once
-
 #include <vector>
 #include <memory>
-
 #include "Inventory.h"
 
 class Character;
 class TurnManager;
 
-class PlayerParty
-{
+class PlayerParty {
 public:
 	PlayerParty();
 	~PlayerParty();
@@ -17,6 +14,7 @@ public:
 	void AddMember(std::shared_ptr<Character> ch);
 
 	const std::vector<std::shared_ptr<Character>>& GetMembers() const;
+	std::vector<std::shared_ptr<Character>>        GetAliveMembers() const;
 
 	bool IsDefeated() const;
 	void PrintStatus() const;
@@ -24,21 +22,19 @@ public:
 	int GetXp()   const;
 	int GetGold() const;
 
-	Inventory& GetInventory() { return m_inventory; }
+	void AddXp(int amount);
+	void DistributeXp(int amount);
+	void AddGold(int amount);
+
+	Inventory& GetInventory()             { return m_inventory; }
 	const Inventory& GetInventory() const { return m_inventory; }
 
 private:
-	friend class TurnManager; //Auth private access
+	friend class TurnManager;
 	friend class Merchant;
 
-	void AddXp(int amount);      // total XP pool (kept for compatibility)
-	void DistributeXp(int amount); // splits XP across alive members
-	void AddGold(int amount);
-
 	std::vector<std::shared_ptr<Character>> m_members;
-	int m_xp;
-	int m_gold;
-
+	int m_xp   = 0;
+	int m_gold = 0;
 	Inventory m_inventory;
 };
-

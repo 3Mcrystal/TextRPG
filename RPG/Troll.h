@@ -10,8 +10,8 @@ public:
 	virtual void Update() override;
 
 	// Skills
-	void BoulderSmash(Character& target);   // heavy single hit
-	void Regenerate();                       // heals self
+	void BoulderSmash(Character& target);
+	void Regenerate();
 
 	virtual int GetXpReward()   const override;
 	virtual int GetGoldReward() const override;

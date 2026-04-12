@@ -2,12 +2,10 @@
 #include <iostream>
 #include <string>
 
-// ============================================================
-//  AsciiArt  –  all terminal visuals for the RPG
-// ============================================================
+//Ugly as f
+
 namespace AsciiArt {
 
-// ── Title screen ─────────────────────────────────────────────
 inline void PrintTitle() {
     std::cout << R"(
   ____  ____   ____
@@ -20,7 +18,7 @@ inline void PrintTitle() {
 )" << "\n";
 }
 
-// ── Dividers ─────────────────────────────────────────────────
+//Dividers
 inline void PrintDivider() {
     std::cout << "============================================\n";
 }
@@ -28,7 +26,7 @@ inline void PrintThinDivider() {
     std::cout << "--------------------------------------------\n";
 }
 
-// ── Party members ────────────────────────────────────────────
+//Party members
 inline void PrintWarrior() {
     std::cout << R"(
       O
@@ -56,13 +54,13 @@ inline void PrintRanger() {
 )" << "\n";
 }
 
-// ── Enemies ──────────────────────────────────────────────────
+//Enemies
 inline void PrintGoblin() {
     std::cout << R"(
     .  .
    (o  o)
     \  /
-   __|__|__   GOBLIN
+   _|__|_   GOBLIN
 )" << "\n";
 }
 
@@ -71,10 +69,11 @@ inline void PrintOrc() {
    ,--  --,
   ( O    O )
    \  ||  /
-  __|====|__  ORC
+    |====|   ORC
 )" << "\n";
 }
 
+// I swear, it's a skeleton
 inline void PrintSkeleton() {
     std::cout << R"(
     _  _
@@ -102,23 +101,23 @@ inline void PrintMerchant() {
 )" << "\n";
 }
 
-// ── Events ───────────────────────────────────────────────────
+//Events
 inline void PrintVictory() {
     std::cout << R"(
   *   *   *
-    \O/
-     |      VICTORY!
-    / \
+     \O/
+      |      VICTORY!
+     / \
   *   *   *
 )" << "\n";
 }
 
 inline void PrintGameOver() {
     std::cout << R"(
-  +-+-+-+-+-+-+-+-+
+  +-+-+-+-+-+-+-+-+-+
   |G|A|M|E| |O|V|E|R|
-  +-+-+-+-+-+-+-+-+
-     ...you died...
+  +-+-+-+-+-+-+-+-+-+
+     ...Git gud...
 )" << "\n";
 }
 
@@ -139,12 +138,13 @@ inline void PrintCombat() {
 )" << "\n";
 }
 
+//Cursya from Super Paper Mario or a dead pile of jelly 
 inline void PrintSkull() {
     std::cout << R"(
     ___
    (x x)
    )   (    CURSED!
-  (_(_)_)
+  (____)
 )" << "\n";
 }
 
@@ -167,6 +167,32 @@ inline void PrintBossWarning() {
 )" << "\n";
 }
 
+//Dragon with 200 chromosomes
+inline void PrintDragon() {
+    std::cout << R"(
+       ___
+     /`   `\
+    /  .-.  \
+   '  (   )  '
+   |  | | |  |
+    \ \___/ /     
+  ~~~`-----'~~~   IGNARAX THE DRAGON
+)" << "\n";
+}
+
+inline void PrintWin() {
+    std::cout << R"(
+ *** *** *** *** *** *** *** ***
+ *                             *
+ *     THE DRAGON IS SLAIN!    *
+ *       Ashveil is saved.     *
+ *                             *
+ *        ~ YOU WIN ~          *
+ *                             *
+ *** *** *** *** *** *** *** ***
+)" << "\n";
+}
+//looks like a bomb
 inline void PrintCampfire() {
     std::cout << R"(
       ) )
@@ -179,7 +205,7 @@ inline void PrintCampfire() {
 )" << "\n";
 }
 
-// ── HP bar ───────────────────────────────────────────────────
+//HP bar
 inline void PrintHpBar(const std::string& name, int hp, int maxHp, int width = 20) {
     int filled = (maxHp > 0) ? (hp * width / maxHp) : 0;
     if (filled < 0) filled = 0;
@@ -193,7 +219,19 @@ inline void PrintHpBar(const std::string& name, int hp, int maxHp, int width = 2
     std::cout << name << " HP " << bar << " " << hp << "/" << maxHp << "\n";
 }
 
-// ── XP bar ───────────────────────────────────────────────────
+//MP bar
+inline void PrintMpBar(const std::string& name, int mp, int maxMp, int width = 20) {
+    int filled = (maxMp > 0) ? (mp * width / maxMp) : 0;
+    if (filled < 0) filled = 0;
+    if (filled > width) filled = width;
+    std::string bar = "[";
+    for (int i = 0; i < width; ++i)
+        bar += (i < filled) ? "*" : " ";
+    bar += "]";
+    std::cout << name << " MP " << bar << " " << mp << "/" << maxMp << "\n";
+}
+
+//XP bar
 inline void PrintXpBar(int xp, int xpNeeded, int level, int width = 20) {
     int filled = (xpNeeded > 0) ? (xp * width / xpNeeded) : width;
     if (filled < 0) filled = 0;
@@ -207,4 +245,4 @@ inline void PrintXpBar(int xp, int xpNeeded, int level, int width = 20) {
     std::cout << "LVL " << level << " XP " << bar << " " << xp << "/" << xpNeeded << "\n";
 }
 
-} // namespace AsciiArt
+}

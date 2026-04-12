@@ -1,9 +1,6 @@
 #pragma once
 #include "Item.h"
 
-// When used in combat, signals the TurnManager to flee.
-// Since Use() only receives the target Character, we set a flag
-// on the item itself that TurnManager checks after calling UseItem().
 class SmokeBomb : public Item
 {
 public:

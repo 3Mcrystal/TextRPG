@@ -9,7 +9,8 @@ Goblin::Goblin(const std::string& name)
 Goblin::~Goblin() {}
 
 void Goblin::Update() {
-	//simple AI, TurnMaaneger decides action
+	//simple AI, TurnManager decides
+	//May add more complex behavior later
 }
 
 void Goblin::ClubSmash(Character& target) {

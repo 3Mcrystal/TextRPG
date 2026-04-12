@@ -2,7 +2,7 @@
 
 ItemStack::ItemStack(std::shared_ptr<Item> prototype, int qty)
     : m_itemPrototype(prototype), m_quantity(qty)
-    , m_name(prototype->GetName()) // cache the name to avoid dangling reference
+    , m_name(prototype->GetName())
 {}
 
 const std::string& ItemStack::GetName() const {

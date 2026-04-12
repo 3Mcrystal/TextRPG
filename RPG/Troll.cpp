@@ -3,7 +3,7 @@
 #include "Troll.h"
 
 Troll::Troll(const std::string& name)
-	: Character(name, 80, 15, 4) // HP, ATK, SPD — tanky and slow
+	: Character(name, 80, 15, 4) // HP, ATK, SPD
 {}
 
 Troll::~Troll() {}

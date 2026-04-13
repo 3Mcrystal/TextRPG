@@ -12,7 +12,7 @@ Ranger::~Ranger() {}
 void Ranger::Update() {}
 
 void Ranger::PrecisionShot(Character& target) {
-    const int COST = 7;
+    const int COST = 12;
     if (!SpendMp(COST)) {
         std::cout << m_name << " needs " << COST << " MP for Precision Shot!\n"; return;
     }

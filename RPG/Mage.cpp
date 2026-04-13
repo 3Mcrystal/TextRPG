@@ -26,14 +26,14 @@ void Mage::ArcaneBlast(Character& target) {
 		std::cout << m_name << " doesn't have enough MP for Arcane Blast! (" << COST << " needed)\n";
 		return;
 	}
-	int dmg = GetAttack() + 16;
+	int dmg = GetAttack() + 10;
 	std::cout << m_name << " unleashes ARCANE BLAST on " << target.GetName() << " for " << dmg << " damage!!\n";
 	target.TakeDamage(dmg);
 }
 
 void Mage::OnLevelUp() {
 	m_baseMaxHp  += 5;
-	m_baseAttack += 4;
+	m_baseAttack += 3;
 	m_baseMaxMp  += 12;
 	m_baseSpeed  += 0;
 

@@ -7,7 +7,7 @@ public:
     Entity(const std::string& name, int maxHp);
     virtual ~Entity();
 
-	virtual void Update() = 0; // action per turn
+    virtual void Update() = 0; // action per turn
     virtual void TakeDamage(int amount);
     virtual bool IsAlive() const;
     virtual std::string GetName() const;

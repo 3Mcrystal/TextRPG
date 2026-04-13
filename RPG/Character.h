@@ -6,7 +6,7 @@
 class Character : public Entity {
 public:
     Character(const std::string& name, int maxHp, int attack, int speed,
-        int maxMp = 0, int defense = 0);
+              int maxMp = 0, int defense = 0);
     virtual ~Character();
 
     virtual void Update() override;
@@ -34,10 +34,10 @@ public:
 
     //Status effects
     void ApplyStatus(StatusType type, int duration, int power = 0);
-    void TickStatus();          // called at start of actor's turn
-    bool IsStunned()    const { return m_status.type == StatusType::Stun && m_status.duration > 0; }
-    bool IsPoisoned()   const { return m_status.type == StatusType::Poison && m_status.duration > 0; }
-    bool IsBurning()    const { return m_status.type == StatusType::Burn && m_status.duration > 0; }
+    void TickStatus(); // called at start of turn
+    bool IsStunned() const { return m_status.type == StatusType::Stun && m_status.duration > 0; }
+    bool IsPoisoned() const { return m_status.type == StatusType::Poison && m_status.duration > 0; }
+    bool IsBurning() const { return m_status.type == StatusType::Burn && m_status.duration > 0; }
     const StatusEffect& GetStatus() const { return m_status; }
     void ClearStatus() { m_status = {}; }
 
@@ -53,8 +53,8 @@ public:
     int  GetCurseRemainingFights() const { return m_curseRemainingFights; }
 
     //Leveling 
-    int  GetLevel()    const { return m_level; }
-    int  GetXp()       const { return m_xp; }
+    int  GetLevel() const { return m_level; }
+    int  GetXp() const { return m_xp; }
     int  GetXpToNext() const;
     void GainXp(int amount);
     void PrintLevelInfo() const;

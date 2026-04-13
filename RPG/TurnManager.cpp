@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <map>
 
 #include "TurnManager.h"
 #include "PlayerParty.h"
@@ -26,6 +27,7 @@
 #include "Dragon.h"
 #include "Beggar.h"
 #include "Merchant.h"
+#include "EnemyAI.h"
 
 TurnManager::TurnManager() {}
 TurnManager::~TurnManager() {}
@@ -262,6 +264,18 @@ EncounterResult TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& enc
         for (auto& e : encounter.GetEnemies()) PrintEnemyArt(e);
     }
 
+    //Roll items for each enemy
+    std::map<Character*, EnemyItem> enemyItems;
+    for (auto& e : encounter.GetEnemies()) {
+        std::string baseName = e->GetName();
+        auto space = baseName.find(' ');
+        if (space != std::string::npos) baseName = baseName.substr(0, space);
+        EnemyItem item = RollEnemyItem(baseName);
+        if (item.IsAvailable())
+            std::cout << "  [" << e->GetName() << " is carrying a " << item.name << "]\n";
+        enemyItems[e.get()] = item;
+    }
+
     int roundNum = 0;
     using EPtr = std::shared_ptr<Character>;
 
@@ -380,45 +394,114 @@ EncounterResult TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& enc
             }
             //Enemy turn
             else {
-                auto alivePlayers = party.GetAliveMembers();
-                auto target = ChooseRandomAlive(alivePlayers);
-                if (!target) continue;
+                EnemyItem& item = enemyItems[actor.get()];
 
-                static std::random_device rd; static std::mt19937 gen(rd());
-                std::uniform_int_distribution<> roll(0,100);
-                int r = roll(gen);
+                //Context
+                std::vector<EPtr> aliveEnemies;
+                for (auto& e : encounter.GetEnemies()) if (e->IsAlive()) aliveEnemies.push_back(e);
 
-                if (auto d = std::dynamic_pointer_cast<Dragon>(actor)) {
-                    if      (r <= 25) { auto m = party.GetAliveMembers(); d->DragonBreath(m); }
-                    else if (r <= 50) d->TailSwipe(*target);
-                    else { std::cout << actor->GetName() << " snaps at " << target->GetName() << "!\n"; target->TakeDamage(actor->GetAttack()); }
-                }
-                else if (auto t = std::dynamic_pointer_cast<Troll>(actor)) {
-                    if      (r <= 20) t->BoulderSmash(*target);
-                    else if (r <= 40) t->Regenerate();
-                    else { std::cout << actor->GetName() << " swings at " << target->GetName() << "!\n"; target->TakeDamage(actor->GetAttack()); }
-                }
-                else if (auto g = std::dynamic_pointer_cast<Goblin>(actor)) {
-                    if (r <= 30) g->ClubSmash(*target);
-                    else { std::cout << actor->GetName() << " attacks " << target->GetName() << "!\n"; target->TakeDamage(actor->GetAttack()); }
-                }
-                else if (auto o = std::dynamic_pointer_cast<Orc>(actor)) {
-                    if (r <= 30) o->AxeSwing(*target);
-                    else { std::cout << actor->GetName() << " attacks " << target->GetName() << "!\n"; target->TakeDamage(actor->GetAttack()); }
-                }
-                else if (auto s = std::dynamic_pointer_cast<Skeleton>(actor)) {
-                    // Skeleton: 20% poison attack
-                    if (r <= 20) {
-                        std::cout << s->GetName() << " jabs a poisoned bone at " << target->GetName() << "!\n";
-                        target->TakeDamage(s->GetAttack());
-                        target->ApplyStatus(StatusType::Poison, 2, 3);
-                    }
-                    else if (r <= 50) s->BoneSlash(*target);
-                    else { std::cout << actor->GetName() << " attacks " << target->GetName() << "!\n"; target->TakeDamage(actor->GetAttack()); }
-                }
+                AIContext ctx { actor, aliveEnemies, party, roundNum, item };
+
+                //Get decision
+                AIDecision decision;
+                if      (std::dynamic_pointer_cast<Dragon>(actor)) decision = EnemyAI_Dragon (ctx);
+                else if (std::dynamic_pointer_cast<Troll>(actor)) decision = EnemyAI_Troll (ctx);
+                else if (std::dynamic_pointer_cast<Goblin>(actor)) decision = EnemyAI_Goblin (ctx);
+                else if (std::dynamic_pointer_cast<Orc>(actor)) decision = EnemyAI_Orc (ctx);
+                else if (std::dynamic_pointer_cast<Skeleton>(actor)) decision = EnemyAI_Skeleton (ctx);
                 else {
-                    std::cout << actor->GetName() << " attacks " << target->GetName() << "!\n";
-                    target->TakeDamage(actor->GetAttack());
+                    //Fallback
+                    decision.action = AIAction::BasicAttack;
+                    decision.target = ChooseRandomAlive(party.GetAliveMembers());
+                }
+
+                //Ensure target is valid
+                if (!decision.target && decision.action != AIAction::Defend
+                    && !(decision.action == AIAction::UseSkill && std::dynamic_pointer_cast<Dragon>(actor))) {
+                    decision.target = ChooseRandomAlive(party.GetAliveMembers());
+                }
+                if (!decision.target && decision.action == AIAction::BasicAttack) continue;
+
+                //Execute
+                switch (decision.action) {
+
+                case AIAction::UseItem: {
+                    //Use enemy item
+                    if (item.IsAvailable()) {
+                        std::cout << actor->GetName() << " uses their " << item.name << "!\n";
+                        if (item.type == EnemyItem::Type::HealPotion) {
+                            int heal = 25;
+                            int before = actor->GetHp();
+                            actor->SetHp(std::min(actor->GetHp() + heal, actor->GetMaxHp()));
+                            std::cout << actor->GetName() << " recovers " << (actor->GetHp() - before) << " HP!\n";
+                        }
+                        else if (item.type == EnemyItem::Type::BerserkerRoot) {
+                            //ATK + 5 for fight
+                            actor->SetAttack(actor->GetAttack() + 5);
+                            std::cout << actor->GetName() << "'s eyes go bloodshot — ATK +5!\n";
+                        }
+                        else if (item.type == EnemyItem::Type::PoisonFlask) {
+                            //Next attack poison
+                            actor->ApplyStatus(StatusType::Poison, 2, 0); //2 turn
+                            std::cout << actor->GetName() << " coats their weapon with poison!\n";
+                        }
+                        item.Consume();
+                    }
+                    break;
+                }
+
+                case AIAction::Defend: {
+                    actor->Defend();
+                    std::cout << actor->GetName() << " braces for impact!\n";
+                    break;
+                }
+
+                case AIAction::UseSkill: {
+                    if (auto d = std::dynamic_pointer_cast<Dragon>(actor)) {
+                        if (!decision.target) {
+                            auto m = party.GetAliveMembers();
+                            d->DragonBreath(m);
+                        } else {
+                            d->TailSwipe(*decision.target);
+                        }
+                    }
+                    else if (auto t = std::dynamic_pointer_cast<Troll>(actor)) {
+                        if (decision.target == actor) {
+                            t->Regenerate();
+                        } else {
+                            t->BoulderSmash(*decision.target);
+                        }
+                    }
+                    else if (auto g = std::dynamic_pointer_cast<Goblin>(actor)) {
+                        g->ClubSmash(*decision.target);
+                    }
+                    else if (auto o = std::dynamic_pointer_cast<Orc>(actor)) {
+                        o->AxeSwing(*decision.target);
+                    }
+                    else if (auto s = std::dynamic_pointer_cast<Skeleton>(actor)) {
+                        //Skill roll
+                        static std::mt19937 skGen(std::random_device{}());
+                        std::uniform_int_distribution<> skRoll(1, 100);
+                        int sv = skRoll(skGen);
+                        if (sv <= 67) {
+                            s->BoneSlash(*decision.target);
+                        } else {
+                            std::cout << s->GetName() << " jabs a poisoned bone at "
+                                      << decision.target->GetName() << "!\n";
+                            decision.target->TakeDamage(s->GetAttack());
+                            decision.target->ApplyStatus(StatusType::Poison, 2, 3);
+                        }
+                    }
+                    break;
+                }
+
+                case AIAction::BasicAttack:
+                default: {
+                    std::cout << actor->GetName() << " attacks " << decision.target->GetName() << "!\n";
+                    decision.target->TakeDamage(actor->GetAttack());
+                    break;
+                }
+
                 }
             }
         }

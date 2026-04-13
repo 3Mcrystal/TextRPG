@@ -114,13 +114,7 @@
     <ClInclude Include="Inventory.h">
       <Filter>Fichiers d%27en-tête\Item</Filter>
     </ClInclude>
-    <ClInclude Include="Dragon.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="QuestLog.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="ReviveScroll.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="StatusEffect.h">
@@ -128,6 +122,15 @@
     </ClInclude>
     <ClInclude Include="WorldMap.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="ReviveScroll.h">
+      <Filter>Fichiers d%27en-tête\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Dragon.h">
+      <Filter>Fichiers d%27en-tête\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyAI.h">
+      <Filter>Fichiers d%27en-tête\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -194,23 +197,26 @@
     <ClCompile Include="Inventory.cpp">
       <Filter>Fichiers sources\Item</Filter>
     </ClCompile>
-    <ClCompile Include="Antidote.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="SmokeBomb.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Dragon.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="QuestLog.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="ReviveScroll.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="WorldMap.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Antidote.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Dragon.cpp">
+      <Filter>Fichiers sources\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="SmokeBomb.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ReviveScroll.cpp">
+      <Filter>Fichiers sources\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAI.cpp">
+      <Filter>Fichiers sources\Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

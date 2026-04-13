@@ -14,6 +14,7 @@ public:
     virtual int GetSpeed() const = 0;
 
     void SetHp(int hp);
+    void SetMaxHp(int maxHp);
     void SetName(const std::string& name) { m_name = name; }
     int GetHp() const;
 

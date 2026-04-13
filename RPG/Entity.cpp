@@ -21,5 +21,11 @@ void Entity::SetHp(int hp) {
     m_hp = hp;
 }
 
+void Entity::SetMaxHp(int maxHp) {
+    if (maxHp < 1) maxHp = 1;
+    m_maxHp = maxHp;
+    if (m_hp > m_maxHp) m_hp = m_maxHp;
+}
+
 int Entity::GetHp() const { return m_hp; }
 int Entity::GetMaxHp() const { return m_maxHp; }

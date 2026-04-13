@@ -11,6 +11,7 @@ Goblin::~Goblin() {}
 void Goblin::Update() {
 	//simple AI, TurnManager decides
 	//May add more complex behavior later
+	//Probably for a last content update
 }
 
 void Goblin::ClubSmash(Character& target) {

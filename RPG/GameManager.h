@@ -26,23 +26,23 @@ private:
 
 	bool m_running      = false;
 	bool m_gameWon      = false;
-	int  m_fightCount   = 0; //wins only
+	int  m_fightCount   = 0;   // combat wins only
 	bool m_canRest      = true;
-	bool m_finalUnlocked = false; //set on fightCount threshold
+	bool m_finalUnlocked = false; // set when fightCount hits threshold
 
-	//encounter
+	// ── encounter generation ──────────────────────────────────
 	std::unique_ptr<Encounter> GenerateEncounter();
 	std::unique_ptr<Encounter> GenerateCombatEncounter(int scalingLevel);
 	std::unique_ptr<Encounter> GenerateBossEncounter(int scalingLevel);
 	std::unique_ptr<Encounter> GenerateFinalBoss();
 
-	//town
+	// ── town actions ─────────────────────────────────────────
 	void DoTownMenu();
 	void DoRest(bool free);
 	void DoInventory() const;
 	void PrintHelp() const;
 	void RollLocationEvent();
 
-	//Rewards (QUETS)
+	// ── quest rewards ─────────────────────────────────────────
 	void CollectQuestRewards();
 };

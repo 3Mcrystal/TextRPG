@@ -5,7 +5,7 @@
 #include "AsciiArt.h"
 
 Character::Character(const std::string& name, int maxHp, int attack, int speed,
-                     int maxMp, int defense)
+    int maxMp, int defense)
     : Entity(name, maxHp)
     , m_attack(attack), m_speed(speed), m_defense(defense)
     , m_mp(maxMp), m_maxMp(maxMp)
@@ -16,13 +16,14 @@ Character::Character(const std::string& name, int maxHp, int attack, int speed,
 Character::~Character() {}
 void Character::Update() {}
 
-int  Character::GetAttack()  const { return m_attack;  }
+int  Character::GetAttack()  const { return m_attack; }
+void Character::SetAttack(int attack) { m_attack = attack; }
 int  Character::GetDefense() const { return m_defense; }
-int  Character::GetSpeed()   const { return m_speed;   }
+int  Character::GetSpeed()   const { return m_speed; }
 
-void Character::Defend()          { m_defending = true;  }
+void Character::Defend() { m_defending = true; }
 bool Character::IsDefending() const { return m_defending; }
-void Character::ResetDefend()     { m_defending = false; }
+void Character::ResetDefend() { m_defending = false; }
 
 bool Character::SpendMp(int cost) {
     if (m_mp < cost) return false;
@@ -46,9 +47,9 @@ bool Character::RollCrit() const {
 void Character::ApplyStatus(StatusType type, int duration, int power) {
     //Don't stack stun
     if (m_status.IsActive() && m_status.type == StatusType::Stun) return;
-    m_status.type     = type;
+    m_status.type = type;
     m_status.duration = duration;
-    m_status.power    = power;
+    m_status.power = power;
     std::cout << m_name << " is now " << m_status.Name() << "ed!\n";
 }
 
@@ -56,16 +57,16 @@ void Character::TickStatus() {
     if (!m_status.IsActive()) return;
 
     switch (m_status.type) {
-        case StatusType::Poison:
-        case StatusType::Burn:
-            std::cout << m_name << " suffers " << m_status.power
-                      << " " << m_status.Name() << " damage!\n";
-            Entity::TakeDamage(m_status.power); //Bypass defense
-            break;
-        case StatusType::Stun:
-            std::cout << m_name << " is stunned and loses their turn!\n";
-            break;
-        default: break;
+    case StatusType::Poison:
+    case StatusType::Burn:
+        std::cout << m_name << " suffers " << m_status.power
+            << " " << m_status.Name() << " damage!\n";
+        Entity::TakeDamage(m_status.power); //Bypass defense
+        break;
+    case StatusType::Stun:
+        std::cout << m_name << " is stunned and loses their turn!\n";
+        break;
+    default: break;
     }
 
     m_status.duration--;
@@ -90,12 +91,12 @@ void Character::TakeDamage(int amount) {
 
 //Curse
 void Character::ApplyCurse(int fights) {
-    m_isCursed             = true;
+    m_isCursed = true;
     m_curseRemainingFights = fights;
 }
 
 void Character::RemoveCurse() {
-    m_isCursed             = false;
+    m_isCursed = false;
     m_curseRemainingFights = 0;
 }
 
@@ -103,7 +104,7 @@ void Character::TickCurse() {
     if (!m_isCursed) return;
     m_curseRemainingFights--;
     if (m_curseRemainingFights <= 0) {
-        m_hp       = 0;
+        m_hp = 0;
         m_isCursed = false;
         std::cout << m_name << " has succumbed to the curse...\n";
     }
@@ -113,7 +114,7 @@ void Character::TickCurse() {
 void Character::OnFightEnd() {
     int restore = std::max(1, m_maxMp * 30 / 100);
     RestoreMp(restore);
-	//Status effects stay after fight
+    //Status effects stay after fight
 }
 
 //Leveling
@@ -131,15 +132,15 @@ void Character::GainXp(int amount) {
 }
 
 void Character::OnLevelUp() {
-    m_baseMaxHp  += 8;
+    m_baseMaxHp += 8;
     m_baseAttack += 2;
-    m_maxHp       = m_baseMaxHp;
-    m_attack      = m_baseAttack;
-    m_hp          = std::min(m_hp + 15, m_maxHp);
+    m_maxHp = m_baseMaxHp;
+    m_attack = m_baseAttack;
+    m_hp = std::min(m_hp + 15, m_maxHp);
 
     AsciiArt::PrintLevelUp();
     std::cout << m_name << " reached level " << m_level << "!\n";
-    std::cout << "  MaxHP  +" << 8 << " (now " << m_maxHp  << ")\n";
+    std::cout << "  MaxHP  +" << 8 << " (now " << m_maxHp << ")\n";
     std::cout << "  Attack +" << 2 << " (now " << m_attack << ")\n";
     std::cout << "  Restored 15 HP.\n";
     AsciiArt::PrintThinDivider();

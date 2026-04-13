@@ -21,9 +21,9 @@
 #include "AsciiArt.h"
 
 static const int FINAL_BOSS_THRESHOLD = 10; //fights before Dragon unlocks
-static const int REST_COST			  = 5;  //Gold per rest (it's not logic, yes)
-static const int REST_HP              = 25; //fix
-static const int REST_MP_PCT		  = 40; //percentage of max
+static const int REST_COST = 5;  //Gold per rest (it's not logic, yes)
+static const int REST_HP = 25; //fix
+static const int REST_MP_PCT = 40; //percentage of max
 
 GameManager::GameManager() {}
 GameManager::~GameManager() {}
@@ -65,7 +65,6 @@ void GameManager::start()
 	PrintHelp();
 }
 
-// ─────────────────────────────────────────────────────────────
 void GameManager::loop()
 {
 	while (m_running) {
@@ -104,23 +103,25 @@ void GameManager::loop()
 					          << "  HP: " << e->GetHp() << "\n";
 			}
 
-			bool survived = m_turns->ExecuteEncounter(
+			EncounterResult result = m_turns->ExecuteEncounter(
 				*m_party, *encounter, *m_input, m_quests.get());
 
-			if (!survived) { m_running = false; continue; }
+			if (result == EncounterResult::Defeat) { m_running = false; continue; }
 
 			//Final boss win condition
-			if (encounter->IsFinalBoss()) {
+			if (encounter->IsFinalBoss() && result == EncounterResult::Victory) {
 				m_gameWon = true;
 				CollectQuestRewards();
 				continue;
 			}
 
 			//Count wins
-			if (!encounter->IsBeggarEncounter() && !encounter->IsMerchantEncounter()) {
+			if (result == EncounterResult::Victory &&
+			    !encounter->IsBeggarEncounter() && !encounter->IsMerchantEncounter()) {
 				m_fightCount++;
 				m_quests->OnFightSurvived();
 				CollectQuestRewards();
+				m_quests->RefreshCompleted();
 
 				if (m_fightCount >= FINAL_BOSS_THRESHOLD && !m_finalUnlocked) {
 					m_finalUnlocked = true;
@@ -130,10 +131,16 @@ void GameManager::loop()
 					std::cout << "  *** Travel to the Mountains to face the Dragon. ***\n";
 					AsciiArt::PrintDivider();
 				}
+
+				//Random event (location-specific, wins only)
+				RollLocationEvent();
 			}
 
 			m_canRest = true;
-			std::cout << "You survived!\n";
+			if (result == EncounterResult::Fled)
+				std::cout << "You escaped!\n";
+			else
+				std::cout << "You survived!\n";
 			PrintHelp();
 		}
 
@@ -331,9 +338,9 @@ std::unique_ptr<Encounter> GameManager::GenerateEncounter()
 
 	auto enc = std::make_unique<Encounter>();
 
-	// 70% combat | 10% beggar | 15% merchant
+	// 70% combat | 15% beggar | 15% merchant
 	if (t >= 85) { enc->SetMerchantEncounter(true); return enc; }
-	if (t >= 75) {
+	if (t >= 70) {
 		enc->SetBeggarEncounter(true);
 		enc->AddEnemy(std::make_shared<Beggar>("Beggar"));
 		return enc;
@@ -352,9 +359,27 @@ std::unique_ptr<Encounter> GameManager::GenerateCombatEncounter(int scalingLevel
 	std::uniform_int_distribution<> countDist(1, 3);
 	int count = countDist(gen);
 
-	//Scaling: 3 fights -> +2 HP, +1 ATK for enemies
-	int hpBonus  = (scalingLevel / 3) * 2;
-	int atkBonus = (scalingLevel / 3) * 1;
+	//Zone base levels
+	int zoneHpBase  = 0;
+	int zoneAtkBase = 0;
+	switch (loc.id) {
+		case LocationId::Forest:
+			zoneHpBase  =  0;  zoneAtkBase = 0; break;
+		case LocationId::Dungeon:
+			zoneHpBase  = 12;  zoneAtkBase = 3; break;
+		case LocationId::Mountains:
+			zoneHpBase  = 25;  zoneAtkBase = 6; break;
+		default: break;
+	}
+
+	//Scaling: 3 fights -> +2 HP, +1 ATK for enemies(+ zone base)
+
+	int fightHpBonus  = (scalingLevel / 3) * 2;
+	int fightAtkBonus = (scalingLevel / 3) * 1;
+
+	int totalHpBonus  = zoneHpBase  + fightHpBonus;
+	int totalAtkBonus = zoneAtkBase + fightAtkBonus;
+
 
 	//Weighted table from location
 	int total = loc.goblinWeight + loc.orcWeight + loc.skeletonWeight;
@@ -367,18 +392,23 @@ std::unique_ptr<Encounter> GameManager::GenerateCombatEncounter(int scalingLevel
 
 		if (roll < loc.goblinWeight) {
 			auto g = std::make_shared<Goblin>("Goblin");
-			g->SetHp(g->GetHp() + hpBonus);
+			g->SetMaxHp(g->GetMaxHp() + totalHpBonus);
+			g->SetHp(g->GetMaxHp());
+			g->SetAttack(g->GetAttack() + totalAtkBonus);
 			enemy = g;
 		} else if (roll < loc.goblinWeight + loc.orcWeight) {
 			auto o = std::make_shared<Orc>("Orc");
-			o->SetHp(o->GetHp() + hpBonus);
+			o->SetMaxHp(o->GetMaxHp() + totalHpBonus);
+			o->SetHp(o->GetMaxHp());
+			o->SetAttack(o->GetAttack() + totalAtkBonus);
 			enemy = o;
 		} else {
 			auto s = std::make_shared<Skeleton>("Skeleton");
-			s->SetHp(s->GetHp() + hpBonus);
+			s->SetMaxHp(s->GetMaxHp() + totalHpBonus);
+			s->SetHp(s->GetMaxHp());
+			s->SetAttack(s->GetAttack() + totalAtkBonus);
 			enemy = s;
 		}
-		(void)atkBonus;
 		enc->AddEnemy(enemy);
 	}
 	return enc;

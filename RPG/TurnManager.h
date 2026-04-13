@@ -6,11 +6,17 @@ class Encounter;
 class InputManager;
 class QuestLog;
 
+enum class EncounterResult {
+	Victory, //Want a medal?
+	Fled, // Coward: run / smoke bomb
+	Defeat //Party dead: loser
+};
+
 class TurnManager {
 public:
-	TurnManager();
-	~TurnManager();
+    TurnManager();
+    ~TurnManager();
 
-	bool ExecuteEncounter(PlayerParty& party, Encounter& encounter,
-	                      InputManager& input, QuestLog* quests = nullptr);
+    EncounterResult ExecuteEncounter(PlayerParty& party, Encounter& encounter,
+                                     InputManager& input, QuestLog* quests = nullptr);
 };

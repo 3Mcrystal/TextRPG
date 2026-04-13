@@ -30,7 +30,7 @@
 TurnManager::TurnManager() {}
 TurnManager::~TurnManager() {}
 
-// ── Helpers ───────────────────────────────────────────────────
+//Helpers
 
 static std::shared_ptr<Character> ChooseRandomAlive(
     const std::vector<std::shared_ptr<Character>>& list)
@@ -72,7 +72,6 @@ static void PrintEnemyArt(const std::shared_ptr<Character>& e) {
     else if (std::dynamic_pointer_cast<Skeleton>(e)) AsciiArt::PrintSkeleton();
 }
 
-// Crit-aware player attack
 static void DoPlayerAttack(std::shared_ptr<Character>& actor,
                            std::shared_ptr<Character>& target)
 {
@@ -85,7 +84,7 @@ static void DoPlayerAttack(std::shared_ptr<Character>& actor,
     target->TakeDamage(dmg);
 }
 
-// Roll for enemy loot drop (20% Potion, 10% coin)
+//Roll for enemy loot drop
 static void RollEnemyDrop(PlayerParty& party, const std::string& enemyName) {
     static std::random_device rd; static std::mt19937 gen(rd());
     std::uniform_int_distribution<> roll(1, 100);
@@ -99,11 +98,11 @@ static void RollEnemyDrop(PlayerParty& party, const std::string& enemyName) {
     }
 }
 
-// Name enemies uniquely when duplicates exist (Goblin A, Goblin B…)
+//Name enemies when duplicates
 static void NameEnemies(Encounter& encounter) {
     auto& enemies = const_cast<std::vector<std::shared_ptr<Character>>&>(
         encounter.GetEnemies());
-    // count occurrences of each base name
+    //Count occurrences
     std::vector<std::string> seen;
     for (auto& e : enemies) {
         std::string base = e->GetName();
@@ -111,22 +110,21 @@ static void NameEnemies(Encounter& encounter) {
         for (auto& s : seen) if (s == base) count++;
         if (count > 0 || std::count_if(enemies.begin(), enemies.end(),
             [&](auto& x){ return x->GetName() == base; }) > 1) {
-            // assign suffix A, B, C...
         }
         seen.push_back(base);
     }
-    // Second pass: if any name appears more than once, suffix all of them
+    //Suffix name
     for (auto& e : enemies) {
         std::string base = e->GetName();
         int total = (int)std::count_if(enemies.begin(), enemies.end(),
             [&](auto& x){ return x->GetName().substr(0, base.size()) == base; });
         (void)total;
     }
-    // Simple approach: track per-name counter
+    //Track per-name counter
     std::vector<std::string> nameCount;
     for (auto& e : enemies) {
         std::string base = e->GetName();
-        // strip any existing suffix first
+        //Strip suffix first
         int cnt = (int)std::count(nameCount.begin(), nameCount.end(), base);
         if (std::count_if(enemies.begin(), enemies.end(),
             [&](auto& x){ return x->GetName() == base; }) > 1) {
@@ -136,7 +134,7 @@ static void NameEnemies(Encounter& encounter) {
     }
 }
 
-// ── Skill submenu helper ─────────────────────────────────────
+//Skill submenu
 static bool HandleSkill(std::shared_ptr<Character>& actor,
                         std::vector<std::shared_ptr<Character>>& ae,
                         InputManager& input)
@@ -179,11 +177,10 @@ static bool HandleSkill(std::shared_ptr<Character>& actor,
     return false;
 }
 
-// ─────────────────────────────────────────────────────────────
-bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
+EncounterResult TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                                    InputManager& input, QuestLog* quests)
 {
-    // ── Beggar ───────────────────────────────────────────────
+    //Beggar
     if (encounter.IsBeggarEncounter()) {
         AsciiArt::PrintBeggar();
         std::cout << "A beggar approaches you, asking for some gold.\n";
@@ -232,22 +229,22 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
             }
             else std::cout << "Unknown command.\n";
         }
-        return true;
+        return EncounterResult::Fled;
     }
 
-    // ── Merchant ─────────────────────────────────────────────
+    //Merchant
     if (encounter.IsMerchantEncounter()) {
         AsciiArt::PrintMerchant();
         Merchant merchant;
         merchant.Interact(party, input);
-        return true;
+        return EncounterResult::Fled;
     }
 
-    // ── Combat ───────────────────────────────────────────────
+    //Combat
     bool isBoss  = encounter.IsBossEncounter();
     bool isFinal = encounter.IsFinalBoss();
 
-    // Name duplicate enemies (Goblin A, Goblin B…)
+    //Name duplicate enemies (Goblin A, Goblin B…)
     NameEnemies(encounter);
 
     if (isFinal) {
@@ -274,7 +271,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
         std::cout << "  ROUND " << roundNum << "\n";
         AsciiArt::PrintThinDivider();
 
-        // Build and sort turn order
+        //Build and sort turn order
         std::vector<EPtr> order;
         for (auto& p : party.GetMembers()) if (p->IsAlive()) order.push_back(p);
         for (auto& e : encounter.GetEnemies()) if (e->IsAlive()) order.push_back(e);
@@ -286,13 +283,13 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
             if (!actor->IsAlive()) continue;
             if (party.IsDefeated() || encounter.IsAllEnemiesDefeated()) break;
 
-            // Save stun state BEFORE ticking (stun consumes the turn)
+            //Save stun state BEFORE ticking
             bool wasStunned = actor->IsStunned();
 
-            // Tick status at start of turn
+            //Tick status at start of turn
             actor->TickStatus();
             if (!actor->IsAlive()) continue;
-            if (wasStunned) continue; // stun consumed the turn
+            if (wasStunned) continue; //stun = void turn
 
             actor->ResetDefend();
 
@@ -301,7 +298,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                 if (p == actor) { isPlayer = true; break; }
 
             if (isPlayer) {
-                // Show HP + MP + enemy status
+                //Show HP, MP, enemy status
                 AsciiArt::PrintThinDivider();
                 AsciiArt::PrintHpBar(actor->GetName(), actor->GetHp(), actor->GetMaxHp());
                 if (actor->GetMaxMp() > 0)
@@ -348,10 +345,10 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                                 std::cout << "You can't flee a boss fight!\n"; continue;
                             }
                             inv.UseItem(choseName, *party.GetMembers()[0]);
-                            return true;
+                            return EncounterResult::Fled;
                         }
 
-                        // Show all members including dead (for Revive Scroll)
+                        //Show all members
                         auto& members = party.GetMembers();
                         for (size_t i = 0; i < members.size(); ++i)
                             std::cout << "[" << i << "] " << members[i]->GetName()
@@ -370,7 +367,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                         static std::random_device rd2; static std::mt19937 gen2(rd2());
                         std::uniform_int_distribution<> dis(0,1);
                         if (dis(gen2) == 1) {
-                            std::cout << "You successfully fled!\n"; return true;
+                            std::cout << "You successfully fled!\n"; return EncounterResult::Fled;
                         } else {
                             std::cout << "Failed to escape! You take 5 damage!\n";
                             actor->TakeDamage(5);
@@ -381,7 +378,7 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                     else { std::cout << "Invalid command. (attack/defend/skill/item/run/status)\n"; }
                 }
             }
-            // ── Enemy turn ───────────────────────────────────
+            //Enemy turn
             else {
                 auto alivePlayers = party.GetAliveMembers();
                 auto target = ChooseRandomAlive(alivePlayers);
@@ -424,19 +421,19 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                     target->TakeDamage(actor->GetAttack());
                 }
             }
-        } // end actor loop
+        }
 
-        // Round-end pause for readability
+        //Round-end pause, easy read
         if (!party.IsDefeated() && !encounter.IsAllEnemiesDefeated())
             PressEnter(input);
 
-        // ── Defeat ──────────────────────────────────────────
+        //Loser
         if (party.IsDefeated()) {
             AsciiArt::PrintGameOver();
-            return false;
+            return EncounterResult::Defeat;
         }
 
-        // ── Victory ─────────────────────────────────────────
+        //Victory
         if (encounter.IsAllEnemiesDefeated()) {
             if (isFinal) AsciiArt::PrintWin();
             else         AsciiArt::PrintVictory();
@@ -446,13 +443,13 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                 if (quests) quests->OnKill(e->GetName().substr(0, e->GetName().find(' ')));
                 totalXp   += e->GetXpReward();
                 totalGold += e->GetGoldReward();
-                // Drop roll
+                //Drop roll
                 RollEnemyDrop(party, e->GetName());
             }
             std::cout << "Enemies defeated! +" << totalXp << " XP, +" << totalGold << " Gold!\n";
             AsciiArt::PrintThinDivider();
 
-            // Full XP to alive, 50% to dead members
+            //Full XP to alive, 50% to dead members
             for (auto& m : party.GetMembers()) {
                 int xp = m->IsAlive() ? totalXp : totalXp / 2;
                 if (xp > 0) {
@@ -465,10 +462,10 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
             party.AddGold(totalGold);
             if (quests) quests->OnGoldEarned(totalGold);
 
-            // Post-fight MP recovery
+            //Post-fight MP recovery
             for (auto& m : party.GetMembers()) if (m->IsAlive()) m->OnFightEnd();
 
-            // Tick curses
+            //Tick curses
             for (auto& m : party.GetMembers()) {
                 if (m->IsCursed()) {
                     m->TickCurse();
@@ -477,8 +474,8 @@ bool TurnManager::ExecuteEncounter(PlayerParty& party, Encounter& encounter,
                                   << m->GetCurseRemainingFights() << " fight(s) left.\n";
                 }
             }
-            return true;
+            return EncounterResult::Victory;
         }
     }
-    return true;
+    return EncounterResult::Fled;
 }

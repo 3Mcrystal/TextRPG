@@ -32,7 +32,7 @@ inline void PrintWarrior() {
       O
      /|\
     _/ \_
-   [=====]   WARRIOR
+   [=====]   SLANKEC (WARRIOR)
 )" << "\n";
 }
 
@@ -41,7 +41,7 @@ inline void PrintMage() {
       *
     ( O )
      )|(
-    /   \      MAGE
+    /   \      NARCHIS (MAGE)
 )" << "\n";
 }
 
@@ -49,12 +49,13 @@ inline void PrintRanger() {
     std::cout << R"(
       O
     --|\
-      |  -->   RANGER
+      |  -->   AETHYRA (RANGER)
      / \
 )" << "\n";
 }
 
 //Enemies
+//The only thing that looks like something
 inline void PrintGoblin() {
     std::cout << R"(
     .  .
@@ -64,6 +65,7 @@ inline void PrintGoblin() {
 )" << "\n";
 }
 
+//why do you even read that ?
 inline void PrintOrc() {
     std::cout << R"(
    ,--  --,
@@ -148,6 +150,7 @@ inline void PrintSkull() {
 )" << "\n";
 }
 
+//Your dad when you forget to take out the trash
 inline void PrintTroll() {
     std::cout << R"(
    ,########,
@@ -192,6 +195,7 @@ inline void PrintWin() {
  *** *** *** *** *** *** *** ***
 )" << "\n";
 }
+
 //looks like a bomb
 inline void PrintCampfire() {
     std::cout << R"(

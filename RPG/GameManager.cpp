@@ -30,15 +30,15 @@ GameManager::~GameManager() {}
 
 void GameManager::start()
 {
-	m_input  = std::make_unique<InputManager>();
-	m_turns  = std::make_unique<TurnManager>();
-	m_party  = std::make_unique<PlayerParty>();
-	m_world  = std::make_unique<WorldMap>();
+	m_input = std::make_unique<InputManager>();
+	m_turns = std::make_unique<TurnManager>();
+	m_party = std::make_unique<PlayerParty>();
+	m_world = std::make_unique<WorldMap>();
 	m_quests = std::make_unique<QuestLog>();
 
-	m_party->AddMember(std::make_shared<Warrior>("Slankec"));
-	m_party->AddMember(std::make_shared<Mage>("Narchis"));
-	m_party->AddMember(std::make_shared<Ranger>("Aethyra"));
+	m_party->AddMember(std::make_shared<Warrior>("Slankec (W)"));
+	m_party->AddMember(std::make_shared<Mage>("Narchis (M)"));
+	m_party->AddMember(std::make_shared<Ranger>("Aethyra (R)"));
 
 	m_running = true;
 
@@ -78,7 +78,7 @@ void GameManager::loop()
 
 		const auto& loc = m_world->GetCurrent();
 		std::cout << "\n[" << loc.name << "]  Gold: " << m_party->GetGold()
-		          << "  Fights: " << m_fightCount;
+			<< "  Fights: " << m_fightCount;
 		if (m_finalUnlocked)
 			std::cout << "  ** DRAGON AWAITS in the Mountains **";
 		std::cout << "\n> ";
@@ -100,7 +100,7 @@ void GameManager::loop()
 				int i = 0;
 				for (auto& e : encounter->GetEnemies())
 					std::cout << "[" << i++ << "] " << e->GetName()
-					          << "  HP: " << e->GetHp() << "\n";
+					<< "  HP: " << e->GetHp() << "\n";
 			}
 
 			EncounterResult result = m_turns->ExecuteEncounter(
@@ -117,7 +117,7 @@ void GameManager::loop()
 
 			//Count wins
 			if (result == EncounterResult::Victory &&
-			    !encounter->IsBeggarEncounter() && !encounter->IsMerchantEncounter()) {
+				!encounter->IsBeggarEncounter() && !encounter->IsMerchantEncounter()) {
 				m_fightCount++;
 				m_quests->OnFightSurvived();
 				CollectQuestRewards();
@@ -128,7 +128,7 @@ void GameManager::loop()
 					AsciiArt::PrintDivider();
 					std::cout << "  *** The ground trembles. ***\n";
 					std::cout << "  *** Ignarax has been spotted above the Shattered Peaks. ***\n";
-					std::cout << "  *** Travel to the Mountains to face the Dragon. ***\n";
+					std::cout << "  *** Travel to the Mountains and type 'dragon' to face him. ***\n"; //Yes 'type "dragon" ', because RP is for losers (I'm just lazy)
 					AsciiArt::PrintDivider();
 				}
 
@@ -191,6 +191,26 @@ void GameManager::loop()
 		//Map
 		else if (cmd == "map" || cmd == "m") {
 			m_world->PrintMap();
+		}
+
+		//Face the Dragon
+		else if (cmd == "dragon") {
+			if (!m_finalUnlocked) {
+				std::cout << "You are not yet strong enough. Keep fighting.\n";
+			}
+			else if (m_world->CurrentId() != LocationId::Mountains) {
+				std::cout << "You must travel to the Shattered Peaks to face Ignarax.\n";
+			}
+			else {
+				auto encounter = GenerateFinalBoss();
+				EncounterResult result = m_turns->ExecuteEncounter(
+					*m_party, *encounter, *m_input, m_quests.get());
+				if (result == EncounterResult::Defeat) { m_running = false; continue; }
+				if (result == EncounterResult::Victory) {
+					m_gameWon = true;
+					CollectQuestRewards();
+				}
+			}
 		}
 
 		//Quit
@@ -256,7 +276,7 @@ void GameManager::DoRest(bool free)
 	for (auto& m : m_party->GetMembers()) {
 		if (!m->IsAlive()) continue;
 		int hpBefore = m->GetHp();
-		int newHp    = std::min(hpBefore + REST_HP, m->GetMaxHp());
+		int newHp = std::min(hpBefore + REST_HP, m->GetMaxHp());
 		m->SetHp(newHp);
 		int hpGained = newHp - hpBefore;
 
@@ -292,6 +312,8 @@ void GameManager::PrintHelp() const
 	if (!loc.isSafe) std::cout << "explore (e)  ";
 	std::cout << "travel (t)  rest (r)  status (s)  inventory (i)  quests (q)  map (m)";
 	if (loc.isSafe) std::cout << "  town (w)";
+	if (m_finalUnlocked && m_world->CurrentId() == LocationId::Mountains)
+		std::cout << "  dragon";
 	std::cout << "  quit\n";
 }
 
@@ -314,13 +336,8 @@ std::unique_ptr<Encounter> GameManager::GenerateEncounter()
 {
 	const auto& loc = m_world->GetCurrent();
 
-	if (loc.id == LocationId::Mountains && m_finalUnlocked) {
-		// 30% trigger final boss
-		static std::random_device rd2; static std::mt19937 gen2(rd2());
-		std::uniform_int_distribution<> trigger(1, 100);
-		if (trigger(gen2) <= 30)
-			return GenerateFinalBoss();
-	}
+	//useless block
+	if (loc.id == LocationId::Mountains && m_finalUnlocked) {}
 
 	//Boss every 5 fights
 	if (m_fightCount > 0 && m_fightCount % 5 == 0) {
@@ -360,24 +377,23 @@ std::unique_ptr<Encounter> GameManager::GenerateCombatEncounter(int scalingLevel
 	int count = countDist(gen);
 
 	//Zone base levels
-	int zoneHpBase  = 0;
+	int zoneHpBase = 0;
 	int zoneAtkBase = 0;
 	switch (loc.id) {
-		case LocationId::Forest:
-			zoneHpBase  =  0;  zoneAtkBase = 0; break;
-		case LocationId::Dungeon:
-			zoneHpBase  = 12;  zoneAtkBase = 3; break;
-		case LocationId::Mountains:
-			zoneHpBase  = 25;  zoneAtkBase = 6; break;
-		default: break;
+	case LocationId::Forest:
+		zoneHpBase = 0;  zoneAtkBase = 0; break;
+	case LocationId::Dungeon:
+		zoneHpBase = 12;  zoneAtkBase = 3; break;
+	case LocationId::Mountains:
+		zoneHpBase = 25;  zoneAtkBase = 6; break;
+	default: break;
 	}
 
 	//Scaling: 3 fights -> +2 HP, +1 ATK for enemies(+ zone base)
-
-	int fightHpBonus  = (scalingLevel / 3) * 2;
+	int fightHpBonus = (scalingLevel / 3) * 2;
 	int fightAtkBonus = (scalingLevel / 3) * 1;
 
-	int totalHpBonus  = zoneHpBase  + fightHpBonus;
+	int totalHpBonus = zoneHpBase + fightHpBonus;
 	int totalAtkBonus = zoneAtkBase + fightAtkBonus;
 
 
@@ -421,7 +437,8 @@ std::unique_ptr<Encounter> GameManager::GenerateBossEncounter(int scalingLevel)
 	auto troll = std::make_shared<Troll>("Troll");
 	//Scale boss HP too
 	int hpBonus = (scalingLevel / 3) * 5;
-	troll->SetHp(troll->GetHp() + hpBonus);
+	troll->SetMaxHp(troll->GetMaxHp() + hpBonus);
+	troll->SetHp(troll->GetMaxHp());
 	enc->AddEnemy(troll);
 	return enc;
 }
@@ -437,75 +454,75 @@ std::unique_ptr<Encounter> GameManager::GenerateFinalBoss()
 
 void GameManager::RollLocationEvent()
 {
-    static std::random_device rd; static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> roll(1, 100);
-    int r = roll(gen);
-    if (r > 20) return; // 20% chance event
+	static std::random_device rd; static std::mt19937 gen(rd());
+	std::uniform_int_distribution<> roll(1, 100);
+	int r = roll(gen);
+	if (r > 20) return; // 20% chance event
 
-    const auto& loc = m_world->GetCurrent();
-    AsciiArt::PrintThinDivider();
+	const auto& loc = m_world->GetCurrent();
+	AsciiArt::PrintThinDivider();
 
-    switch (loc.id) {
-        case LocationId::Forest:
-            // Mysterious shrine: buff random ALIVE member
-            {
-                auto alive = m_party->GetAliveMembers();
-                if (alive.empty()) break;
-                std::uniform_int_distribution<> idx(0,(int)alive.size()-1);
-                auto& member = alive[idx(gen)];
-                int heal = 10;
-                member->SetHp(std::min(member->GetHp() + heal, member->GetMaxHp()));
-                std::cout << "  A moss-covered shrine glows faintly in the dark.\n";
-                std::cout << "  " << member->GetName() << " feels its warmth. (+" << heal << " HP)\n";
-            }
-            break;
-        case LocationId::Dungeon:
-            // Trapped chest: 40% gold, 50% damage, 10% curse
-            {
-                std::uniform_int_distribution<> chest(1, 100);
-                int chestRoll = chest(gen);
+	switch (loc.id) {
+	case LocationId::Forest:
+		// Mysterious shrine: buff random ALIVE member
+	{
+		auto alive = m_party->GetAliveMembers();
+		if (alive.empty()) break;
+		std::uniform_int_distribution<> idx(0,(int)alive.size()-1);
+		auto& member = alive[idx(gen)];
+		int heal = 10;
+		member->SetHp(std::min(member->GetHp() + heal, member->GetMaxHp()));
+		std::cout << "  A moss-covered shrine glows faintly in the dark.\n";
+		std::cout << "  " << member->GetName() << " feels its warmth. (+" << heal << " HP)\n";
+	}
+	break;
+	case LocationId::Dungeon:
+		// Trapped chest: 40% gold, 50% damage, 10% curse
+	{
+		std::uniform_int_distribution<> chest(1, 100);
+		int chestRoll = chest(gen);
 
-                if (chestRoll <= 40) {
-                    int gold = 8;
-                    m_party->AddGold(gold);
-                    std::cout << "  You pry open a rusted chest. +" << gold << " Gold!\n";
-                } else if (chestRoll <= 90) {
-                    auto alive = m_party->GetAliveMembers();
-                    if (!alive.empty()) {
-                        std::uniform_int_distribution<> idx(0, (int)alive.size() - 1);
-                        auto& member = alive[idx(gen)];
-                        int dmg = 8;
-                        member->TakeDamage(dmg);
-                        std::cout << "  A trap springs from the chest!\n";
-                        std::cout << "  " << member->GetName() << " takes " << dmg << " damage!\n";
-                    }
-                } else {
-                    auto alive = m_party->GetAliveMembers();
-                    if (!alive.empty()) {
-                        std::uniform_int_distribution<> idx(0, (int)alive.size() - 1);
-                        auto& member = alive[idx(gen)];
-                        AsciiArt::PrintSkull();
-                        std::cout << "  Dark runes are carved inside the lid...\n";
-                        std::cout << "  " << member->GetName() << " has been cursed!\n";
-                        member->ApplyCurse(3);
-                    }
-                }
-            }
-            break;
-        case LocationId::Mountains:
-            // Blizzard: damages all party members
-            {
-                std::cout << "  A sudden blizzard sweeps through the peaks!\n";
-                int dmg = 5;
-                for (auto& m : m_party->GetMembers()) {
-                    if (!m->IsAlive()) continue;
-                    m->TakeDamage(dmg);
-                    std::cout << "  " << m->GetName() << " takes " << dmg << " cold damage!\n";
-                }
-            }
-            break;
-        default:
-            break;
-    }
-    AsciiArt::PrintThinDivider();
+		if (chestRoll <= 40) {
+			int gold = 8;
+			m_party->AddGold(gold);
+			std::cout << "  You pry open a rusted chest. +" << gold << " Gold!\n";
+		} else if (chestRoll <= 90) {
+			auto alive = m_party->GetAliveMembers();
+			if (!alive.empty()) {
+				std::uniform_int_distribution<> idx(0, (int)alive.size() - 1);
+				auto& member = alive[idx(gen)];
+				int dmg = 8;
+				member->TakeDamage(dmg);
+				std::cout << "  A trap springs from the chest!\n";
+				std::cout << "  " << member->GetName() << " takes " << dmg << " damage!\n";
+			}
+		} else {
+			auto alive = m_party->GetAliveMembers();
+			if (!alive.empty()) {
+				std::uniform_int_distribution<> idx(0, (int)alive.size() - 1);
+				auto& member = alive[idx(gen)];
+				AsciiArt::PrintSkull();
+				std::cout << "  Dark runes are carved inside the lid...\n";
+				std::cout << "  " << member->GetName() << " has been cursed!\n";
+				member->ApplyCurse(3);
+			}
+		}
+	}
+	break;
+	case LocationId::Mountains:
+		// Blizzard: damages all party members
+	{
+		std::cout << "  A sudden blizzard sweeps through the peaks!\n";
+		int dmg = 5;
+		for (auto& m : m_party->GetMembers()) {
+			if (!m->IsAlive()) continue;
+			m->TakeDamage(dmg);
+			std::cout << "  " << m->GetName() << " takes " << dmg << " cold damage!\n";
+		}
+	}
+	break;
+	default:
+		break;
+	}
+	AsciiArt::PrintThinDivider();
 }
